@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jong Seung Kim, MD, PhD - Academic Profile</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1a365d;
+            --secondary-color: #2c5282;
+            --accent-color: #3182ce;
+            --text-color: #2d3748;
+            --text-light: #718096;
+            --bg-color: #f7fafc;
+            --white: #ffffff;
+            --border-color: #e2e8f0;
+            --success-color: #38a169;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', 'Roboto', sans-serif;
+            line-height: 1.7;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: var(--white);
+            padding: 60px 0;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+        }
+
+        .profile-photo {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            border: 4px solid rgba(255,255,255,0.3);
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        .header-info h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .header-info .title {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 15px;
+        }
+
+        .header-info .affiliation {
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+
+        .contact-links {
+            margin-top: 20px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .contact-links a {
+            color: var(--white);
+            text-decoration: none;
+            padding: 8px 16px;
+            border: 1px solid rgba(255,255,255,0.4);
+            border-radius: 20px;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .contact-links a:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        /* Navigation */
+        nav {
+            background: var(--white);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            justify-content: center;
+            gap: 10px;
+            padding: 15px 0;
+        }
+
+        nav a {
+            color: var(--text-color);
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        nav a:hover, nav a.active {
+            background: var(--accent-color);
+            color: var(--white);
+        }
+
+        /* Sections */
+        section {
+            padding: 60px 0;
+        }
+
+        section:nth-child(even) {
+            background: var(--white);
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid var(--accent-color);
+            display: inline-block;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: var(--white);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .stat-label {
+            color: var(--text-light);
+            font-size: 0.95rem;
+            margin-top: 5px;
+        }
+
+        /* Research Areas */
+        .research-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .research-card {
+            background: var(--white);
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            border-left: 4px solid var(--accent-color);
+        }
+
+        .research-card h3 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .research-card p {
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+
+        /* Publications Table */
+        .publications-summary {
+            background: var(--white);
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        .pub-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .pub-table th {
+            background: var(--primary-color);
+            color: var(--white);
+            padding: 15px;
+            text-align: left;
+            font-weight: 500;
+        }
+
+        .pub-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .pub-table tr:hover {
+            background: var(--bg-color);
+        }
+
+        .pub-table .journal-name {
+            font-weight: 500;
+            color: var(--primary-color);
+        }
+
+        .pub-table .paper-count {
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .pub-table .if-value {
+            text-align: right;
+            color: var(--accent-color);
+            font-weight: 600;
+        }
+
+        /* Chart Container */
+        .chart-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .chart-box {
+            background: var(--white);
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        .chart-box h3 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+        }
+
+        .bar-chart {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .bar-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .bar-label {
+            width: 60px;
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        .bar-container {
+            flex: 1;
+            height: 25px;
+            background: var(--bg-color);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-color), var(--secondary-color));
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 10px;
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 500;
+            min-width: 40px;
+        }
+
+        /* Education & Career */
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: var(--accent-color);
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-bottom: 30px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -34px;
+            top: 5px;
+            width: 12px;
+            height: 12px;
+            background: var(--accent-color);
+            border-radius: 50%;
+            border: 3px solid var(--white);
+        }
+
+        .timeline-year {
+            color: var(--accent-color);
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .timeline-content h4 {
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+
+        .timeline-content p {
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--primary-color);
+            color: var(--white);
+            padding: 40px 0;
+            text-align: center;
+        }
+
+        footer p {
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .header-info h1 {
+                font-size: 1.8rem;
+            }
+
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .contact-links {
+                justify-content: center;
+            }
+
+            .chart-container {
+                grid-template-columns: 1fr;
+            }
+
+            .pub-table {
+                font-size: 0.85rem;
+            }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-color);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent-color);
+            border-radius: 4px;
+        }
+
+        /* Highlight badge */
+        .highlight-badge {
+            display: inline-block;
+            background: var(--success-color);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            margin-left: 8px;
+        }
+
+        .sub-section {
+            margin-top: 40px;
+        }
+
+        .sub-section h3 {
+            color: var(--secondary-color);
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <img src="profile_photo.jpg" alt="Jong Seung Kim" class="profile-photo">
+                <div class="header-info">
+                    <h1>Jong Seung Kim</h1>
+                    <p class="title">MD, PhD | Professor of Otorhinolaryngology</p>
+                    <p class="affiliation">Jeonbuk National University Hospital<br>Department of Otorhinolaryngology-Head and Neck Surgery<br>Department of Medical Informatics</p>
+                    <div class="contact-links">
+                        <a href="mailto:kjsjdk@jbnu.ac.kr">Email</a>
+                        <a href="https://pubmed.ncbi.nlm.nih.gov/?term=jong+seung+kim%2C+jeonbuk&sort=date&size=200" target="_blank">PubMed</a>
+                        <a href="https://orcid.org/0000-0002-1384-6799" target="_blank">ORCID</a>
+                        <a href="https://scholar.google.com/citations?user=f8W_X50AAAAJ&hl=ko" target="_blank">Google Scholar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="container">
+            <ul>
+                <li><a href="#about" class="active">About</a></li>
+                <li><a href="#research">Research</a></li>
+                <li><a href="#publications">Publications</a></li>
+                <li><a href="#statistics">Statistics</a></li>
+                <li><a href="#education">Education</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- About Section -->
+    <section id="about">
+        <div class="container">
+            <h2 class="section-title">About Me</h2>
+            <p style="font-size: 1.1rem; max-width: 800px; color: var(--text-light);">
+                I am a physician-scientist and Professor of Otorhinolaryngology at Jeonbuk National University Medical School.
+                I also serve as Chief Professor of Medical Informatics. My research focuses on sinonasal diseases,
+                clinical outcomes research using large-scale databases, and the application of machine learning in medicine.
+                With over 110 SCI-indexed publications and an H-index of 18, I am committed to advancing medical knowledge through innovative research methodologies.
+            </p>
+
+            <!-- Quick Stats -->
+            <div class="stats-grid" style="margin-top: 40px;">
+                <div class="stat-card">
+                    <div class="stat-number">110+</div>
+                    <div class="stat-label">SCI Publications</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">480</div>
+                    <div class="stat-label">Total Impact Factor</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">18</div>
+                    <div class="stat-label">H-index</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">10+</div>
+                    <div class="stat-label">Years of Research</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Research Section -->
+    <section id="research">
+        <div class="container">
+            <h2 class="section-title">Research Interests</h2>
+            <div class="research-grid">
+                <div class="research-card">
+                    <h3>Sinonasal Diseases</h3>
+                    <p>Chronic rhinosinusitis, nasal polyps, fungal sinusitis, and inverted papilloma</p>
+                </div>
+                <div class="research-card">
+                    <h3>Head & Neck Surgery</h3>
+                    <p>Endoscopic sinus surgery, skull base surgery, and minimally invasive techniques</p>
+                </div>
+                <div class="research-card">
+                    <h3>Clinical Outcomes Research</h3>
+                    <p>Large-scale database studies, meta-analyses, and systematic reviews</p>
+                </div>
+                <div class="research-card">
+                    <h3>Allergy & Immunology</h3>
+                    <p>Allergic rhinitis, asthma, and immunological mechanisms in respiratory diseases</p>
+                </div>
+                <div class="research-card">
+                    <h3>COVID-19 Research</h3>
+                    <p>Impact of COVID-19 on respiratory diseases and vaccination outcomes</p>
+                </div>
+                <div class="research-card">
+                    <h3>Medical Informatics</h3>
+                    <p>Machine learning, AI-based diagnostic tools, predictive models, and big data analytics in healthcare</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Publications Section -->
+    <section id="publications">
+        <div class="container">
+            <h2 class="section-title">Selected Publications</h2>
+
+            <!-- By Journal -->
+            <div class="sub-section">
+                <h3>Publications by Journal (Top 15)</h3>
+                <div class="publications-summary">
+                    <table class="pub-table">
+                        <thead>
+                            <tr>
+                                <th>Journal</th>
+                                <th style="text-align:center">Papers</th>
+                                <th style="text-align:right">IF (2025)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="journal-name">Journal of Hepatology <span class="highlight-badge">Top</span></td>
+                                <td class="paper-count">1</td>
+                                <td class="if-value">33.0</td>
+                            </tr>
+                            <tr>
+                                <td class="journal-name">Allergy <span class="highlight-badge">Q1</span></td>
+                                <td class="paper-count">3</td>
+                                <td class="if-value">12.0</td>
+                            </tr>
+                            <tr>
+                                <td class="journal-name">Journal of Infection <span class="highlight-badge">Q1</span></td>
+                                <td class="paper-count">1</td>
+                                <td class="if-value">11.9</td>
+                            </tr>
+                            <tr>
+                                <td class="journal-name">JAMA Dermatology <span class="highlight-badge">Q1</span></td>
+                                <td class="paper-count">1</td>
+                                <td class="if-value">11.0</td>
+                            </tr>
+                            <tr>
+                                <td class="journal-name">International Journal of Surgery <span class="highlight-badge">Q1</span></td>
+                                <td class="paper-count">1</td>
+                                <td class="if-value">10.1</td>
+                            </tr>
+                            <tr>
+                                <td class="journal-name">J Allergy Clin Immunol Pract <span class="highlight-badge">Q1</span></td>
+                                <td class="paper-count">3</td>
+                                <td class="if-value">9.4</td>
+                            </tr>
+                            <tr>
+                                <td class="journal-name">ACS Applied Materials & Interfaces</td>
+                                <td class="paper-count">1</td>
+                                <td class="if-value">8.3</td>
+                            </tr>
+                            <tr>
+                                <td class="journal-name">Emerging Microbes & Infections</td>
+                                <td class="paper-count">1</td>
+                                <td class="if-value">7.5</td>
+                            </tr>
+                            <tr>
+                                <td class="journal-name">Rhinology</td>
+                                <td class="paper-count">1</td>
+                                <td class="if-value">6.8</td>
+                            </tr>
+                            <tr>
+                                <td class="journal-name">J Clinical Periodontology</td>
+                                <td class="paper-count">1</td>
+                                <td class="if-value">6.8</td>
+                            </tr>
+                            <tr>
+                                <td class="journal-name">J Investigative Dermatology</td>
+                                <td class="paper-count">1</td>
+                                <td class="if-value">5.7</td>
+                            </tr>
+                            <tr>
+                                <td class="journal-name">Clinical Pharmacology & Therapeutics</td>
+                                <td class="paper-count">1</td>
+                                <td class="if-value">5.3</td>
+                            </tr>
+                            <tr>
+                                <td class="journal-name">Respiratory Research</td>
+                                <td class="paper-count">2</td>
+                                <td class="if-value">5.0</td>
+                            </tr>
+                            <tr>
+                                <td class="journal-name">Travel Medicine and Infectious Disease</td>
+                                <td class="paper-count">1</td>
+                                <td class="if-value">4.7</td>
+                            </tr>
+                            <tr>
+                                <td class="journal-name">Scientific Reports</td>
+                                <td class="paper-count">3</td>
+                                <td class="if-value">3.9</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- High Impact Papers -->
+            <div class="sub-section">
+                <h3>High-Impact Publications (IF ≥ 10)</h3>
+                <div class="publications-summary">
+                    <table class="pub-table">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Journal</th>
+                                <th style="text-align:center">Year</th>
+                                <th style="text-align:right">IF</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Fatty liver index and hepatocellular carcinoma risk</td>
+                                <td class="journal-name">J Hepatol</td>
+                                <td class="paper-count">2024</td>
+                                <td class="if-value">26.8</td>
+                            </tr>
+                            <tr>
+                                <td>Influenza and anosmia in COVID-19</td>
+                                <td class="journal-name">J Infection</td>
+                                <td class="paper-count">2021</td>
+                                <td class="if-value">18.4</td>
+                            </tr>
+                            <tr>
+                                <td>RSV contributes to severe COVID-19</td>
+                                <td class="journal-name">Allergy</td>
+                                <td class="paper-count">2024</td>
+                                <td class="if-value">12.6</td>
+                            </tr>
+                            <tr>
+                                <td>SARS-CoV-2 infection and severe asthma exacerbation</td>
+                                <td class="journal-name">Allergy</td>
+                                <td class="paper-count">2023</td>
+                                <td class="if-value">12.6</td>
+                            </tr>
+                            <tr>
+                                <td>Breast cancer-related lymphedema in Korea</td>
+                                <td class="journal-name">Int J Surg</td>
+                                <td class="paper-count">2024</td>
+                                <td class="if-value">12.5</td>
+                            </tr>
+                            <tr>
+                                <td>COVID-19 vaccination and severe asthma exacerbation</td>
+                                <td class="journal-name">Allergy</td>
+                                <td class="paper-count">2025</td>
+                                <td class="if-value">12.0</td>
+                            </tr>
+                            <tr>
+                                <td>Risk of alopecia areata after COVID-19</td>
+                                <td class="journal-name">JAMA Dermatol</td>
+                                <td class="paper-count">2024</td>
+                                <td class="if-value">11.0</td>
+                            </tr>
+                            <tr>
+                                <td>Septal deviation and bronchial asthma</td>
+                                <td class="journal-name">J Allergy Clin Immunol Pract</td>
+                                <td class="paper-count">2022</td>
+                                <td class="if-value">10.2</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Statistics Section -->
+    <section id="statistics">
+        <div class="container">
+            <h2 class="section-title">Publication Statistics</h2>
+
+            <div class="chart-container">
+                <!-- Publications by Year -->
+                <div class="chart-box">
+                    <h3>Publications by Year</h3>
+                    <div class="bar-chart">
+                        <div class="bar-item">
+                            <span class="bar-label">2026</span>
+                            <div class="bar-container">
+                                <div class="bar-fill" style="width: 7%;">2</div>
+                            </div>
+                        </div>
+                        <div class="bar-item">
+                            <span class="bar-label">2025</span>
+                            <div class="bar-container">
+                                <div class="bar-fill" style="width: 100%;">27</div>
+                            </div>
+                        </div>
+                        <div class="bar-item">
+                            <span class="bar-label">2024</span>
+                            <div class="bar-container">
+                                <div class="bar-fill" style="width: 70%;">19</div>
+                            </div>
+                        </div>
+                        <div class="bar-item">
+                            <span class="bar-label">2023</span>
+                            <div class="bar-container">
+                                <div class="bar-fill" style="width: 48%;">13</div>
+                            </div>
+                        </div>
+                        <div class="bar-item">
+                            <span class="bar-label">2022</span>
+                            <div class="bar-container">
+                                <div class="bar-fill" style="width: 22%;">6</div>
+                            </div>
+                        </div>
+                        <div class="bar-item">
+                            <span class="bar-label">2021</span>
+                            <div class="bar-container">
+                                <div class="bar-fill" style="width: 26%;">7</div>
+                            </div>
+                        </div>
+                        <div class="bar-item">
+                            <span class="bar-label">2020</span>
+                            <div class="bar-container">
+                                <div class="bar-fill" style="width: 11%;">3</div>
+                            </div>
+                        </div>
+                        <div class="bar-item">
+                            <span class="bar-label">~2019</span>
+                            <div class="bar-container">
+                                <div class="bar-fill" style="width: 85%;">43</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Impact Factor Distribution -->
+                <div class="chart-box">
+                    <h3>Impact Factor by Year (Publication Year IF)</h3>
+                    <div class="bar-chart">
+                        <div class="bar-item">
+                            <span class="bar-label">2025</span>
+                            <div class="bar-container">
+                                <div class="bar-fill" style="width: 85%;">97.0</div>
+                            </div>
+                        </div>
+                        <div class="bar-item">
+                            <span class="bar-label">2024</span>
+                            <div class="bar-container">
+                                <div class="bar-fill" style="width: 100%;">113.7</div>
+                            </div>
+                        </div>
+                        <div class="bar-item">
+                            <span class="bar-label">2023</span>
+                            <div class="bar-container">
+                                <div class="bar-fill" style="width: 74%;">84.0</div>
+                            </div>
+                        </div>
+                        <div class="bar-item">
+                            <span class="bar-label">2022</span>
+                            <div class="bar-container">
+                                <div class="bar-fill" style="width: 18%;">20.1</div>
+                            </div>
+                        </div>
+                        <div class="bar-item">
+                            <span class="bar-label">2021</span>
+                            <div class="bar-container">
+                                <div class="bar-fill" style="width: 41%;">46.4</div>
+                            </div>
+                        </div>
+                        <div class="bar-item">
+                            <span class="bar-label">~2020</span>
+                            <div class="bar-container">
+                                <div class="bar-fill" style="width: 80%;">90.6</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Summary Stats -->
+            <div class="stats-grid" style="margin-top: 40px;">
+                <div class="stat-card">
+                    <div class="stat-number">120</div>
+                    <div class="stat-label">Total Publications (2012-2026)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">461.9</div>
+                    <div class="stat-label">Total IF Sum (Publication Year)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">3.85</div>
+                    <div class="stat-label">Average Impact Factor</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">49</div>
+                    <div class="stat-label">Different Journals</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Education Section -->
+    <section id="education">
+        <div class="container">
+            <h2 class="section-title">Education & Career</h2>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 40px;">
+                <!-- Education -->
+                <div>
+                    <h3 style="color: var(--secondary-color); margin-bottom: 25px;">Education</h3>
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-year">2015 - 2017</div>
+                            <div class="timeline-content">
+                                <h4>Ph.D. in Medicine</h4>
+                                <p>Jeonbuk National University School of Medicine</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-year">2015 - 2017</div>
+                            <div class="timeline-content">
+                                <h4>B.S. in Statistics</h4>
+                                <p>Korea National Open University</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-year">2009 - 2010</div>
+                            <div class="timeline-content">
+                                <h4>M.S. in Medicine</h4>
+                                <p>Jeonbuk National University School of Medicine</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-year">2000 - 2006</div>
+                            <div class="timeline-content">
+                                <h4>M.D. (Doctor of Medicine)</h4>
+                                <p>Jeonbuk National University School of Medicine</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-year">1997 - 2000</div>
+                            <div class="timeline-content">
+                                <h4>Mathematics Education</h4>
+                                <p>Seoul National University</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Career -->
+                <div>
+                    <h3 style="color: var(--secondary-color); margin-bottom: 25px;">Professional Experience</h3>
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-year">2026.3 - Present</div>
+                            <div class="timeline-content">
+                                <h4>Professor</h4>
+                                <p>Department of Otorhinolaryngology<br>Jeonbuk National University Medical School</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-year">2020.2 - Present</div>
+                            <div class="timeline-content">
+                                <h4>Chief Professor of Medical Informatics</h4>
+                                <p>Jeonbuk National University Medical School</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-year">2022.10 - 2026.2</div>
+                            <div class="timeline-content">
+                                <h4>Associate Professor</h4>
+                                <p>Department of Otorhinolaryngology<br>Jeonbuk National University Medical School</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-year">2018.9 - 2022.9</div>
+                            <div class="timeline-content">
+                                <h4>Assistant Professor</h4>
+                                <p>Department of Otorhinolaryngology<br>Jeonbuk National University Medical School</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-year">2016.5 - 2018.8</div>
+                            <div class="timeline-content">
+                                <h4>Clinical Assistant Professor</h4>
+                                <p>Department of Otorhinolaryngology<br>Jeonbuk National University Hospital</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-year">2014.5 - 2016.4</div>
+                            <div class="timeline-content">
+                                <h4>Fellowship</h4>
+                                <p>Department of Otorhinolaryngology<br>Jeonbuk National University Hospital</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact">
+        <div class="container">
+            <h2 class="section-title">Contact</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;">
+                <div class="research-card">
+                    <h3>Office Address</h3>
+                    <p>Department of Otorhinolaryngology-Head and Neck Surgery<br>
+                    Department of Medical Informatics<br>
+                    Jeonbuk National University Hospital<br>
+                    20 Geonji-ro, Deokjin-gu<br>
+                    Jeonju, Jeonbuk 54907, Korea</p>
+                </div>
+                <div class="research-card">
+                    <h3>Contact Information</h3>
+                    <p>
+                        <strong>Email:</strong> kjsjdk@jbnu.ac.kr<br>
+                        <strong>Phone:</strong> +82-63-250-2792<br>
+                        <strong>Fax:</strong> +82-63-250-1986
+                    </p>
+                </div>
+                <div class="research-card">
+                    <h3>Academic Profiles</h3>
+                    <p>
+                        <a href="https://pubmed.ncbi.nlm.nih.gov/?term=jong+seung+kim%2C+jeonbuk&sort=date&size=200" target="_blank" style="color: var(--accent-color);">PubMed</a><br>
+                        <a href="https://orcid.org/0000-0002-1384-6799" target="_blank" style="color: var(--accent-color);">ORCID</a><br>
+                        <a href="https://scholar.google.com/citations?user=f8W_X50AAAAJ&hl=ko" target="_blank" style="color: var(--accent-color);">Google Scholar</a><br>
+                        <a href="https://www.researchgate.net/" target="_blank" style="color: var(--accent-color);">ResearchGate</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Jong Seung Kim. All rights reserved.</p>
+            <p style="margin-top: 10px;">Last updated: January 2026</p>
+        </div>
+    </footer>
+
+    <!-- Smooth Scroll Script -->
+    <script>
+        // Smooth scrolling for navigation
+        document.querySelectorAll('nav a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetSection = document.querySelector(targetId);
+                if (targetSection) {
+                    targetSection.scrollIntoView({ behavior: 'smooth' });
+                }
+
+                // Update active class
+                document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Update active nav on scroll
+        window.addEventListener('scroll', () => {
+            const sections = document.querySelectorAll('section');
+            const navLinks = document.querySelectorAll('nav a');
+
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (scrollY >= sectionTop - 100) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
