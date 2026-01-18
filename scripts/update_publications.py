@@ -17,8 +17,9 @@ from collections import defaultdict
 PUBMED_SEARCH_URL = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi"
 PUBMED_FETCH_URL = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi"
 
-# Search query for Jong Seung Kim at Jeonbuk
-SEARCH_QUERY = "jong seung kim[Author] AND jeonbuk[Affiliation]"
+# Search query for Jong Seung Kim at Jeonbuk (Otorhinolaryngology/Medical Informatics)
+# Excludes chemistry-related papers from different Jong Seung Kim at Korea University
+SEARCH_QUERY = "jong seung kim[Author] AND jeonbuk[Affiliation] NOT (calixarene OR perovskite OR diketopyrrolopyrrole OR fluorescent sensing)"
 
 
 def load_jcr_data():
