@@ -21,7 +21,7 @@
   #live .dot{display:inline-block; width:8px; height:8px; border-radius:50%; background:#7ee2a8;
              margin-right:6px; vertical-align:-1px;}
   #live.off .dot{background:#f0b7b7;}
-  .wrap{max-width:1150px; margin:0 auto; padding:14px 12px 60px;}
+  .wrap{max-width:1200px; margin:0 auto; padding:14px 12px 60px;}
   .card{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px; margin-bottom:14px;}
   .card h2{margin:0 0 8px; font-size:15px;}
   .card p.hint{margin:0 0 10px; font-size:12.5px; color:var(--sub);}
@@ -40,13 +40,17 @@
   .chip .st{font-size:11.5px; margin-top:2px; color:#9ca3af; font-weight:600;}
   .chip.in{background:#eaf6ef; border-color:#bfe3d0;}
   .chip.in .st{color:#116e45;}
+  .chip.fix{background:#eef2fa; border-color:#c6d5ec;}
+  .chip.fix .st{color:#2b5488;}
 
   .tblwrap{overflow-x:auto; -webkit-overflow-scrolling:touch;}
-  table{border-collapse:collapse; width:100%; min-width:900px; font-size:13px; background:#fff;}
+  table{border-collapse:collapse; width:100%; min-width:980px; font-size:13px; background:#fff;}
   th,td{border:1px solid var(--line); padding:7px 8px;}
   th{background:#e8eef7; font-weight:700; text-align:center; white-space:nowrap;}
+  th.fix{background:#dfe8f6;}
   td.c{text-align:center;}
-  td.title{min-width:290px; word-break:keep-all;}
+  td.fix{background:#f7f9fd;}
+  td.title{min-width:280px; word-break:keep-all;}
   td.who{color:var(--sub); font-size:12px; white-space:nowrap;}
   td.tot{font-weight:800; background:#f7f9fc;}
   tr.r1 td{background:#fff7dc !important;}
@@ -116,13 +120,19 @@
 </div>
 
 <script>
-var JUDGES = ["김용민","정한진","허성재","남정권","조재훈"];
+var JUDGES = ["김용민","정한진","허성재","남정권","조재훈"];   // 폰으로 제출하는 심사위원
 var CRIT = ["①독창성","②발표·자료","③임상유용"];
 var ALPHA = "0123456789A";
 var KEY = "snb41_sum_v2";
 var TOPIC = "snb41-k7d92mq4xv3b";                 // 채점 페이지와 동일해야 함
 var FEED = "https://ntfy.sh/" + TOPIC + "/json?poll=1&since=all";
 var POLL_MS = 8000;
+
+/* 직접 입력 심사위원 — 연제 1~16 순서, 각 30점 만점의 총점 */
+var FIXED = [
+  { name:"김종승",
+    per:[15, 18, 25, 27, 18, 27, 19, 22, 24, 30, 24, 24, 28, 23, 20, 24] }
+];
 
 var TALKS = [
  {s:1,n:1,t:"부비동 내시경 수술을 시행한 소아 만성 부비동염 환자 2예",w:"단국대병원 문민석"},
@@ -144,6 +154,9 @@ var TALKS = [
 ];
 var SESNAME = {1:"Session 1 (14:30-15:50) · 좌장 인제대 해운대백병원 김용완",
                2:"Session 2 (16:10-17:30) · 좌장 BS 숨이비인후과 노환중"};
+
+var COLNAMES = JUDGES.concat(FIXED.map(function(f){ return f.name; }));
+var NCOL = 4 + COLNAMES.length + 2;      // 연제·제목·발표·순위 + 채점자 + 합계·평균
 
 function csum(s){
   var t=0; for(var i=0;i<s.length;i++){ t=(t*31+s.charCodeAt(i))%1296; }
@@ -201,7 +214,7 @@ function setLive(on, txt){
 
 function merged(){
   var out = {};
-  for(var j=1;j<=5;j++){
+  for(var j=1;j<=JUDGES.length;j++){
     if(live[j]) out[j] = {sc:live[j].sc, at:live[j].at, src:"auto"};
     else if(manual[j]) out[j] = {sc:manual[j], at:0, src:"manual"};
   }
@@ -211,13 +224,14 @@ function merged(){
 function render(){
   var mg = merged();
   var present = [];
-  for(var j=1;j<=5;j++){ if(mg[j]) present.push(j); }
+  for(var j=1;j<=JUDGES.length;j++){ if(mg[j]) present.push(j); }
+  var nRaters = present.length + FIXED.length;
 
-  // 제출 현황
+  /* 제출 현황 */
   var ch = "";
-  for(var j=1;j<=5;j++){
+  for(var j=1;j<=JUDGES.length;j++){
     var g = mg[j];
-    var tot = g ? g.sc.reduce(function(a,b){return a+b;},0) : 0;
+    var tot = g ? g.sc.reduce(function(a,b){ return a+b; }, 0) : 0;
     var full = 0;
     if(g){ for(var i=0;i<16;i++){ if(g.sc[i*3] && g.sc[i*3+1] && g.sc[i*3+2]) full++; } }
     ch += "<div class='chip " + (g ? "in" : "") + "'><div class='nm'>" + esc(JUDGES[j-1]) + "</div>" +
@@ -225,16 +239,27 @@ function render(){
         ? (g.src === "auto" ? hhmm(g.at) + " 제출" : "수동 입력") + " · " + full + "/16 · " + tot + "점"
         : "미제출") + "</div></div>";
   }
+  FIXED.forEach(function(f){
+    var tot = f.per.reduce(function(a,b){ return a + (b||0); }, 0);
+    var full = f.per.filter(function(v){ return v > 0; }).length;
+    ch += "<div class='chip fix'><div class='nm'>" + esc(f.name) + "</div>" +
+          "<div class='st'>직접 입력 · " + full + "/16 · " + tot + "점</div></div>";
+  });
   document.getElementById("chips").innerHTML = ch;
 
-  // 연제별
+  /* 연제별 계산 */
   var rows = TALKS.map(function(tk, idx){
     var per = [], det = [];
-    for(var j=1;j<=5;j++){
+    for(var j=1;j<=JUDGES.length;j++){
       if(!mg[j]){ per.push(null); det.push(null); continue; }
       var a = mg[j].sc, x = a[idx*3], y = a[idx*3+1], z = a[idx*3+2];
       per.push(x+y+z); det.push([x,y,z]);
     }
+    FIXED.forEach(function(f){
+      var v = f.per[idx];
+      per.push(typeof v === "number" ? v : null);
+      det.push(null);
+    });
     var vals = per.filter(function(v){ return v !== null; });
     var tot = vals.reduce(function(a,b){ return a+b; }, 0);
     return {tk:tk, per:per, det:det, tot:tot, avg:(vals.length ? tot/vals.length : 0)};
@@ -245,18 +270,25 @@ function render(){
   });
   lastData = {rows:rows, present:present};
 
+  /* 표 */
+  var nJ = JUDGES.length;
   var h = "<thead><tr><th>연제</th><th>제목</th><th>발표</th><th>순위</th>";
-  for(var j=1;j<=5;j++){
-    h += "<th>" + esc(JUDGES[j-1]) +
-      (present.indexOf(j) < 0 ? "<br><span style='font-weight:400;font-size:11px;color:#9ca3af'>미제출</span>" : "") +
+  COLNAMES.forEach(function(nm, k){
+    var isFix = k >= nJ;
+    h += "<th" + (isFix ? " class='fix'" : "") + ">" + esc(nm) +
+      (isFix
+        ? "<br><span style='font-weight:400;font-size:11px;color:#5c7ba6'>직접 입력</span>"
+        : (present.indexOf(k+1) < 0
+            ? "<br><span style='font-weight:400;font-size:11px;color:#9ca3af'>미제출</span>" : "")) +
       "</th>";
-  }
+  });
   h += "<th>합계</th><th>평균</th></tr></thead><tbody>";
+
   var curSes = 0;
   rows.forEach(function(r){
     if(r.tk.s !== curSes){
       curSes = r.tk.s;
-      h += "<tr class='sesrow'><td colspan='11'>" + esc(SESNAME[curSes]) + "</td></tr>";
+      h += "<tr class='sesrow'><td colspan='" + NCOL + "'>" + esc(SESNAME[curSes]) + "</td></tr>";
     }
     var cls = (r.rank >= 1 && r.rank <= 4) ? "r" + r.rank : "";
     var badge = (r.rank >= 1 && r.rank <= 4)
@@ -266,22 +298,25 @@ function render(){
          "<td class='title'>" + esc(r.tk.t) + "</td><td class='who'>" + esc(r.tk.w) + "</td>" +
          "<td class='c rank'>" + badge + "</td>";
     r.per.forEach(function(v, k){
-      if(v === null){ h += "<td class='c'><span class='empty'>·</span></td>"; return; }
-      h += "<td class='c'>" + v +
-           (showDet ? "<span class='det'>" + r.det[k].join(" / ") + "</span>" : "") + "</td>";
+      var cc = "c" + (k >= nJ ? " fix" : "");
+      if(v === null){ h += "<td class='" + cc + "'><span class='empty'>·</span></td>"; return; }
+      h += "<td class='" + cc + "'>" + v +
+           (showDet && r.det[k] ? "<span class='det'>" + r.det[k].join(" / ") + "</span>" : "") + "</td>";
     });
     h += "<td class='c tot'>" + r.tot + "</td><td class='c'>" +
          (r.avg ? r.avg.toFixed(1) : "-") + "</td></tr>";
   });
-  h += "</tbody><tfoot><tr><td colspan='11' class='legend' style='font-size:12px;color:#6b7280;background:#fafbfc'>" +
-       "연제당 만점 30점(3개 항목 × 10점) · 제출 " + present.length + "명 기준 만점 " +
-       (present.length*30) + "점<br>" +
+
+  h += "</tbody><tfoot><tr><td colspan='" + NCOL + "' class='legend' " +
+       "style='font-size:12px;color:#6b7280;background:#fafbfc'>" +
+       "연제당 만점 30점(3개 항목 × 10점) · 채점자 " + nRaters + "명 기준 만점 " +
+       (nRaters*30) + "점<br>" +
        "<span><i style='background:#fff7dc;border:1px solid #c99700'></i>1위</span>" +
        "<span><i style='background:#eef1f6;border:1px solid #7f8b9c'></i>2위</span>" +
        "<span><i style='background:#f9ece0;border:1px solid #a96f45'></i>3위</span>" +
        "<span><i style='background:#eaf4ea;border:1px solid #4f8055'></i>4위</span>" +
        "<span>동점은 같은 순위</span>" +
-       (showDet ? "<span>작은 숫자 = " + CRIT.join(" / ") + "</span>" : "") +
+       (showDet ? "<span>작은 숫자 = " + CRIT.join(" / ") + " (직접 입력분은 총점만)</span>" : "") +
        "</td></tr></tfoot>";
   document.getElementById("tbl").innerHTML = h;
 }
@@ -315,7 +350,7 @@ document.getElementById("clearBtn").onclick = function(){
 };
 document.getElementById("tsvBtn").onclick = function(){
   if(!lastData){ return; }
-  var lines = [], head = ["연제","제목","발표","순위"].concat(JUDGES).concat(["합계","평균"]);
+  var lines = [], head = ["연제","제목","발표","순위"].concat(COLNAMES).concat(["합계","평균"]);
   lines.push(head.join("\t"));
   lastData.rows.forEach(function(r){
     var c = [r.tk.n, r.tk.t, r.tk.w, r.rank || ""];
