@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>제41회 삼남비과포럼 자유연제 채점표</title>
+<style>
+  :root{
+    --bg:#f4f5f7; --card:#fff; --line:#e3e6ea; --ink:#1a1d21; --sub:#6b7280;
+    --accent:#1f5faa; --accent-soft:#e8f0fa; --ok:#16794c; --warn:#b45309;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  body{margin:0; background:var(--bg); color:var(--ink);
+       font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic","맑은 고딕",sans-serif;
+       font-size:15px; line-height:1.5; padding-bottom:120px;}
+  header{background:var(--accent); color:#fff; padding:14px 16px calc(14px + env(safe-area-inset-top)); }
+  header h1{margin:0; font-size:17px; font-weight:700; letter-spacing:-0.3px;}
+  header p{margin:4px 0 0; font-size:12px; opacity:.85;}
+
+  .wrap{max-width:640px; margin:0 auto; padding:0 12px;}
+
+  /* 심사위원 선택 */
+  #judgeBox{background:var(--card); border:1px solid var(--line); border-radius:12px;
+            margin:12px 0; padding:14px;}
+  #judgeBox h2{margin:0 0 4px; font-size:15px;}
+  #judgeBox .hint{margin:0 0 10px; font-size:12.5px; color:var(--sub);}
+  .jgrid{display:grid; grid-template-columns:repeat(5,1fr); gap:6px;}
+  .jgrid button{padding:12px 0; font-size:14px; font-weight:700; border-radius:10px;
+    border:1.5px solid var(--line); background:#fff; color:var(--ink);}
+  .jgrid button.on{background:var(--accent); border-color:var(--accent); color:#fff;}
+
+  /* 진행바 */
+  #bar{position:sticky; top:0; z-index:20; background:rgba(244,245,247,.96);
+       backdrop-filter:blur(6px); border-bottom:1px solid var(--line); padding:8px 12px;}
+  #bar .row{max-width:640px; margin:0 auto; display:flex; align-items:center; gap:10px;
+            font-size:13px; font-weight:600;}
+  #bar .track{flex:1; height:7px; background:#dfe3e8; border-radius:99px; overflow:hidden;}
+  #bar .fill{height:100%; width:0%; background:var(--ok); transition:width .2s;}
+  #whoTag{color:var(--accent); font-weight:700;}
+
+  /* 세션 */
+  .ses{margin:18px 0 8px; padding:8px 12px; background:#dde6f2; border-radius:8px;
+       font-size:13px; font-weight:700; color:#173c68;}
+  .ses small{display:block; font-weight:500; color:#3d5f8a; font-size:11.5px; margin-top:2px;}
+
+  /* 연제 카드 */
+  .talk{background:var(--card); border:1px solid var(--line); border-radius:12px;
+        margin:10px 0; padding:12px 12px 10px;}
+  .talk.done{border-color:#bfe3d0; background:#fbfffd;}
+  .th{display:flex; gap:8px; align-items:flex-start;}
+  .no{flex:none; width:26px; height:26px; border-radius:8px; background:var(--accent-soft);
+      color:var(--accent); font-weight:800; font-size:13px; display:flex;
+      align-items:center; justify-content:center;}
+  .tt{font-size:14px; font-weight:700; letter-spacing:-0.3px; word-break:keep-all;}
+  .tw{font-size:12px; color:var(--sub); margin-top:2px;}
+  .crit{margin-top:11px;}
+  .cl{display:flex; justify-content:space-between; align-items:baseline;
+      font-size:12.5px; color:#374151; margin-bottom:4px;}
+  .cv{font-weight:800; color:var(--accent); font-size:13px;}
+  .cv.empty{color:#c0c5cc;}
+  .sc{display:grid; grid-template-columns:repeat(10,1fr); gap:3px;}
+  .sc button{padding:0; height:34px; font-size:12.5px; font-weight:600; border-radius:7px;
+    border:1px solid var(--line); background:#fff; color:#4b5563;}
+  .sc button.on{background:var(--accent); border-color:var(--accent); color:#fff; font-weight:800;}
+  .sub{text-align:right; font-size:12px; color:var(--sub); margin-top:8px;}
+  .sub b{color:var(--ink); font-size:13px;}
+
+  /* 하단 제출 */
+  #foot{position:fixed; left:0; right:0; bottom:0; z-index:30; background:#fff;
+        border-top:1px solid var(--line); padding:10px 12px calc(10px + env(safe-area-inset-bottom));
+        box-shadow:0 -3px 14px rgba(0,0,0,.07);}
+  #foot .row{max-width:640px; margin:0 auto; display:flex; gap:8px;}
+  .btn{flex:1; padding:14px 0; border-radius:11px; border:none; font-size:15px;
+       font-weight:800; background:var(--accent); color:#fff;}
+  .btn.ghost{flex:0 0 96px; background:#eef1f4; color:#374151; font-weight:700; font-size:13.5px;}
+  #msg{max-width:640px; margin:0 auto 8px; font-size:12.5px; color:var(--warn); text-align:center;}
+
+  /* 결과 모달 */
+  #modal{position:fixed; inset:0; z-index:50; background:rgba(0,0,0,.55); display:none;
+         align-items:flex-end; justify-content:center;}
+  #modal.show{display:flex;}
+  #sheet{background:#fff; width:100%; max-width:640px; border-radius:16px 16px 0 0;
+         padding:18px 16px calc(18px + env(safe-area-inset-bottom)); max-height:88vh; overflow:auto;}
+  #sheet h3{margin:0 0 6px; font-size:16px;}
+  #sheet p{margin:0 0 10px; font-size:13px; color:var(--sub);}
+  #code{width:100%; height:132px; font-family:ui-monospace,Menlo,Consolas,monospace;
+        font-size:12.5px; line-height:1.45; border:1px solid var(--line); border-radius:10px;
+        padding:10px; background:#fafbfc; color:#111; -webkit-user-select:all; user-select:all;}
+  .mrow{display:flex; gap:8px; margin-top:10px;}
+  .mrow button{flex:1; padding:13px 0; border-radius:10px; border:none; font-size:14px; font-weight:700;}
+  #copyBtn{background:var(--ok); color:#fff;}
+  #closeBtn{background:#eef1f4; color:#374151; flex:0 0 90px;}
+  #copied{font-size:13px; color:var(--ok); font-weight:700; text-align:center; margin-top:8px; min-height:18px;}
+  .warnbox{background:#fff7e8; border:1px solid #f2d9a8; color:#8a5a00; border-radius:9px;
+           padding:9px 11px; font-size:12.5px; margin-bottom:10px;}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>제41회 삼남비과포럼 자유연제 채점표</h1>
+  <p>2026. 8. 29.(토) · 인제대학교 해운대백병원 5층 대강당</p>
+</header>
+
+<div id="bar"><div class="row">
+  <span id="whoTag">심사위원 미선택</span>
+  <div class="track"><div class="fill" id="fill"></div></div>
+  <span id="cnt">0/16</span>
+</div></div>
+
+<div class="wrap">
+  <div id="judgeBox">
+    <h2>심사위원을 선택해 주십시오</h2>
+    <p class="hint">선택 후 채점표가 나타납니다. 입력 내용은 이 휴대폰에 자동 저장되어, 실수로 창을 닫아도 그대로 복구됩니다.</p>
+    <div class="jgrid" id="jgrid"></div>
+  </div>
+  <div id="list"></div>
+</div>
+
+<div id="foot">
+  <div id="msg"></div>
+  <div class="row">
+    <button class="btn ghost" id="resetBtn">초기화</button>
+    <button class="btn" id="doneBtn">채점 완료 · 결과 만들기</button>
+  </div>
+</div>
+
+<div id="modal"><div id="sheet">
+  <h3>결과 코드</h3>
+  <p>아래 <b>[복사하기]</b>를 누른 뒤, <b>카카오톡 심사위원 단체방에 붙여넣어</b> 주십시오.</p>
+  <div id="warnbox"></div>
+  <textarea id="code" readonly></textarea>
+  <div class="mrow">
+    <button id="closeBtn">닫기</button>
+    <button id="copyBtn">복사하기</button>
+  </div>
+  <div id="copied"></div>
+</div></div>
+
+<script>
+var JUDGES = ["심사위원 1","심사위원 2","심사위원 3","심사위원 4","심사위원 5"];
+var CRIT = ["① 독창성·학술적 가치","② 발표 및 자료 구성","③ 임상적 유용성"];
+var ALPHA = "0123456789A";   // 0 = 미채점, A = 10점
+var KEY = "snb41_score_v1";
+
+var TALKS = [
+ {s:1,n:1,t:"부비동 내시경 수술을 시행한 소아 만성 부비동염 환자 2예",w:"단국대병원 문민석"},
+ {s:1,n:2,t:"Nostril Stenosis Following Herpes Zoster Infection: A Case Report",w:"조선대병원 Abdullah M Aldosari"},
+ {s:1,n:3,t:"Repair of Nostril Stenosis: Case Series",w:"닥터진 이비인후과 진홍률"},
+ {s:1,n:4,t:"좌측 안면부 부종과 비배부의 화농성 분비물을 주소로 내원한 78세 여성 환자",w:"메리놀병원 박체현"},
+ {s:1,n:5,t:"비배부 이물과 관련된 지연성 염증 반응",w:"양산부산대병원 최재혁"},
+ {s:1,n:6,t:"비골 골절 폐쇄정복술에서 초음파의 활용: 증례 3예",w:"원주세브란스기독병원 전현종"},
+ {s:1,n:7,t:"Partial Epiglottectomy Restored Long-Term Noninvasive Ventilation Responsiveness in a Patient With Refractory Obstructive Sleep Apnea: A Case Report",w:"전남대병원 김환민"},
+ {s:1,n:8,t:"양측 눈물샘 비대 및 안구 돌출을 동반한 난치성 범부비동염 1예",w:"건양대병원 김익희"},
+ {s:2,n:9,t:"Both Nasal Obstruction를 주소로 내원한 67세 남환 1예",w:"대전성모병원 이현석"},
+ {s:2,n:10,t:"좌측 하안검 종물을 주소로 내원한 63세 남자",w:"삼성창원병원 이민주"},
+ {s:2,n:11,t:"조기 국소 재발한 비강 점막 악성 흑색종 1예",w:"동아대병원 서민호"},
+ {s:2,n:12,t:"Wide Excision and Staged Reconstruction Using a Paramedian Forehead Flap for Nasal Septal Squamous Cell Carcinoma",w:"고신대복음병원 최종현"},
+ {s:2,n:13,t:"부비동내시경수술과 구개회전피판술을 이용한 Oroantral Fistula 치험 1예",w:"BS숨이비인후과 김무건"},
+ {s:2,n:14,t:"뇌 MRI 상 이상소견으로 의뢰된 32세 남자",w:"해운대백병원 서태경"},
+ {s:2,n:15,t:"안면 통증을 주소로 내원한 78세 여자",w:"창원경상국립대병원 차현철"},
+ {s:2,n:16,t:"ANCA-Negative Destructive Sinonasal Lesion and Upper Airway Narrowing Associated with Recurrent Neutrophilic-Eosinophilic Dermatosis and IgA-κ Monoclonal Gammopathy: A Diagnostic Challenge",w:"부산대병원 김숙진"}
+];
+var SESINFO = {
+ 1:{name:"Session 1 · 14:30-15:50", chair:"좌장 : 인제대 해운대백병원 김용완"},
+ 2:{name:"Session 2 · 16:10-17:30", chair:"좌장 : BS 숨이비인후과 노환중"}
+};
+
+var state = { judge:0, sc:{} };   // sc["3-1"] = 8
+
+function load(){
+  try{
+    var raw = localStorage.getItem(KEY);
+    if(raw){ var o = JSON.parse(raw); if(o && o.sc){ state = o; } }
+  }catch(e){}
+}
+function save(){
+  try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){}
+}
+
+function el(tag, cls, html){
+  var d = document.createElement(tag);
+  if(cls) d.className = cls;
+  if(html !== undefined) d.innerHTML = html;
+  return d;
+}
+function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+
+/* 심사위원 버튼 */
+function renderJudges(){
+  var g = document.getElementById("jgrid");
+  g.innerHTML = "";
+  for(var i=1;i<=JUDGES.length;i++){
+    (function(i){
+      var b = el("button", state.judge===i ? "on" : "", String(i));
+      b.onclick = function(){
+        state.judge = i; save(); renderJudges(); updateBar();
+        document.getElementById("list").style.display = "";
+        window.scrollTo({top:0});
+      };
+      g.appendChild(b);
+    })(i);
+  }
+}
+
+/* 채점 카드 */
+function renderList(){
+  var box = document.getElementById("list");
+  box.innerHTML = "";
+  var curSes = 0;
+  TALKS.forEach(function(tk){
+    if(tk.s !== curSes){
+      curSes = tk.s;
+      var si = SESINFO[curSes];
+      box.appendChild(el("div","ses", esc(si.name) + "<small>" + esc(si.chair) + "</small>"));
+    }
+    var card = el("div","talk"); card.id = "t"+tk.n;
+    var head = el("div","th");
+    head.appendChild(el("div","no", String(tk.n)));
+    var meta = el("div","");
+    meta.appendChild(el("div","tt", esc(tk.t)));
+    meta.appendChild(el("div","tw", esc(tk.w)));
+    head.appendChild(meta);
+    card.appendChild(head);
+
+    CRIT.forEach(function(cn, ci){
+      var key = tk.n + "-" + ci;
+      var wrap = el("div","crit");
+      var lab = el("div","cl");
+      lab.appendChild(el("span","", esc(cn)));
+      var vv = el("span","cv empty","-");
+      vv.id = "v"+key;
+      lab.appendChild(vv);
+      wrap.appendChild(lab);
+      var row = el("div","sc");
+      for(var s=1;s<=10;s++){
+        (function(s){
+          var b = el("button","", String(s));
+          b.id = "b"+key+"-"+s;
+          b.onclick = function(){
+            if(!state.judge){ alert("먼저 상단에서 심사위원을 선택해 주십시오."); return; }
+            if(state.sc[key] === s){ delete state.sc[key]; } else { state.sc[key] = s; }
+            save(); paintTalk(tk.n); updateBar();
+          };
+          row.appendChild(b);
+        })(s);
+      }
+      wrap.appendChild(row);
+      card.appendChild(wrap);
+    });
+    var sub = el("div","sub","소계 <b><span id='s"+tk.n+"'>0</span></b> / 30");
+    card.appendChild(sub);
+    box.appendChild(card);
+  });
+  TALKS.forEach(function(tk){ paintTalk(tk.n); });
+}
+
+function paintTalk(n){
+  var sum = 0, filled = 0;
+  for(var ci=0; ci<3; ci++){
+    var key = n + "-" + ci;
+    var val = state.sc[key];
+    var vv = document.getElementById("v"+key);
+    if(val){ sum += val; filled++; vv.textContent = val + "점"; vv.className = "cv"; }
+    else { vv.textContent = "-"; vv.className = "cv empty"; }
+    for(var s=1;s<=10;s++){
+      document.getElementById("b"+key+"-"+s).className = (val===s) ? "on" : "";
+    }
+  }
+  document.getElementById("s"+n).textContent = sum;
+  document.getElementById("t"+n).className = (filled===3) ? "talk done" : "talk";
+}
+
+function doneCount(){
+  var c = 0;
+  TALKS.forEach(function(tk){
+    if(state.sc[tk.n+"-0"] && state.sc[tk.n+"-1"] && state.sc[tk.n+"-2"]) c++;
+  });
+  return c;
+}
+function updateBar(){
+  var c = doneCount();
+  document.getElementById("cnt").textContent = c + "/16";
+  document.getElementById("fill").style.width = (c/16*100) + "%";
+  document.getElementById("whoTag").textContent =
+    state.judge ? JUDGES[state.judge-1] : "심사위원 미선택";
+}
+
+/* 결과 코드 */
+function csum(s){
+  var t = 0;
+  for(var i=0;i<s.length;i++){ t = (t*31 + s.charCodeAt(i)) % 1296; }
+  var r = t.toString(36).toUpperCase();
+  return r.length < 2 ? "0"+r : r;
+}
+function buildCode(){
+  var body = "";
+  TALKS.forEach(function(tk){
+    for(var ci=0; ci<3; ci++){
+      var v = state.sc[tk.n+"-"+ci] || 0;
+      body += ALPHA.charAt(v);
+    }
+  });
+  return "SNB41-J" + state.judge + "-" + body + "-" + csum(body);
+}
+function totalScore(){
+  var t = 0;
+  for(var k in state.sc){ t += state.sc[k]; }
+  return t;
+}
+
+document.getElementById("doneBtn").onclick = function(){
+  if(!state.judge){ alert("먼저 심사위원을 선택해 주십시오."); window.scrollTo({top:0}); return; }
+  var missing = [];
+  TALKS.forEach(function(tk){
+    if(!(state.sc[tk.n+"-0"] && state.sc[tk.n+"-1"] && state.sc[tk.n+"-2"])) missing.push(tk.n);
+  });
+  var wb = document.getElementById("warnbox");
+  wb.innerHTML = missing.length
+    ? "<div class='warnbox'>아직 채점이 끝나지 않은 연제: <b>" + missing.join(", ") +
+      "번</b><br>그대로 보내도 되지만, 해당 연제는 0점으로 집계됩니다.</div>"
+    : "";
+  var head = "[제41회 삼남비과포럼 채점] " + JUDGES[state.judge-1] +
+             " / 완료 " + doneCount() + "개 / 총 " + totalScore() + "점";
+  document.getElementById("code").value = head + "\n" + buildCode();
+  document.getElementById("copied").textContent = "";
+  document.getElementById("modal").className = "show";
+};
+document.getElementById("closeBtn").onclick = function(){
+  document.getElementById("modal").className = "";
+};
+document.getElementById("copyBtn").onclick = function(){
+  var ta = document.getElementById("code");
+  var ok = false;
+  try{
+    ta.removeAttribute("readonly");
+    ta.focus(); ta.select(); ta.setSelectionRange(0, 99999);
+    ok = document.execCommand("copy");
+    ta.setAttribute("readonly","readonly");
+  }catch(e){}
+  if(!ok && navigator.clipboard){
+    navigator.clipboard.writeText(ta.value).then(function(){
+      document.getElementById("copied").textContent = "복사되었습니다. 카톡방에 붙여넣어 주십시오.";
+    }).catch(function(){
+      document.getElementById("copied").textContent = "자동 복사 실패 — 위 글상자를 길게 눌러 전체 선택 후 복사해 주십시오.";
+    });
+    return;
+  }
+  document.getElementById("copied").textContent = ok
+    ? "복사되었습니다. 카톡방에 붙여넣어 주십시오."
+    : "자동 복사 실패 — 위 글상자를 길게 눌러 전체 선택 후 복사해 주십시오.";
+};
+document.getElementById("resetBtn").onclick = function(){
+  if(confirm("입력한 점수를 모두 지웁니다. 계속할까요?")){
+    state.sc = {}; save();
+    TALKS.forEach(function(tk){ paintTalk(tk.n); });
+    updateBar();
+  }
+};
+document.getElementById("modal").onclick = function(e){
+  if(e.target.id === "modal"){ this.className = ""; }
+};
+
+load(); renderJudges(); renderList(); updateBar();
+</script>
+</body>
+</html>

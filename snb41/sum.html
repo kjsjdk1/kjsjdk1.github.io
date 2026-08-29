@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>제41회 삼남비과포럼 채점 집계</title>
+<style>
+  :root{ --bg:#f4f5f7; --card:#fff; --line:#e3e6ea; --ink:#1a1d21; --sub:#6b7280;
+         --accent:#1f5faa; --ok:#16794c; }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--bg); color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic","맑은 고딕",sans-serif;
+    font-size:14px; line-height:1.5;}
+  header{background:var(--accent); color:#fff; padding:14px 16px;}
+  header h1{margin:0; font-size:17px; font-weight:700;}
+  header p{margin:4px 0 0; font-size:12px; opacity:.85;}
+  .wrap{max-width:1100px; margin:0 auto; padding:14px 12px 60px;}
+  .card{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px; margin-bottom:14px;}
+  .card h2{margin:0 0 6px; font-size:15px;}
+  .card p.hint{margin:0 0 10px; font-size:12.5px; color:var(--sub);}
+  textarea{width:100%; height:150px; border:1px solid var(--line); border-radius:10px;
+    padding:10px; font-family:ui-monospace,Menlo,Consolas,monospace; font-size:12.5px; background:#fafbfc;}
+  .row{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;}
+  button{padding:11px 18px; border:none; border-radius:10px; font-size:14px; font-weight:700; cursor:pointer;}
+  .primary{background:var(--accent); color:#fff;}
+  .ghost{background:#eef1f4; color:#374151;}
+  .green{background:var(--ok); color:#fff;}
+  #status{margin-top:10px; font-size:13px; font-weight:600;}
+  .chip{display:inline-block; padding:4px 10px; border-radius:99px; font-size:12px;
+        font-weight:700; margin:3px 4px 0 0;}
+  .chip.in{background:#e6f4ec; color:#116e45;}
+  .chip.out{background:#f3f4f6; color:#9ca3af;}
+  .tblwrap{overflow-x:auto; -webkit-overflow-scrolling:touch;}
+  table{border-collapse:collapse; width:100%; min-width:900px; font-size:13px; background:#fff;}
+  th,td{border:1px solid var(--line); padding:7px 8px;}
+  th{background:#e8eef7; font-weight:700; text-align:center; white-space:nowrap;}
+  td.c{text-align:center;}
+  td.title{min-width:300px; word-break:keep-all;}
+  td.who{color:var(--sub); font-size:12px; white-space:nowrap;}
+  td.tot{font-weight:800; background:#f7f9fc;}
+  tr.r1 td{background:#fff6d9 !important;}
+  tr.r2 td, tr.r3 td{background:#eef7ea !important;}
+  td.rank{font-weight:800;}
+  .sesrow td{background:#dde6f2 !important; font-weight:700; color:#173c68; font-size:12.5px;}
+  .empty{color:#c7ccd3;}
+  @media print{
+    header,.card,#tools{display:none !important;}
+    body{background:#fff;} .wrap{padding:0;} table{min-width:0; font-size:11px;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>제41회 삼남비과포럼 자유연제 채점 집계</h1>
+  <p>심사위원 5명 결과코드 → 연제별 합계·순위 자동 계산</p>
+</header>
+
+<div class="wrap">
+
+<div class="card" id="tools">
+  <h2>결과코드 붙여넣기</h2>
+  <p class="hint">
+    카카오톡 심사위원 단체방의 대화를 <b>전체 복사해서 그대로</b> 붙여넣으셔도 됩니다.
+    (SNB41-J… 로 시작하는 코드만 자동으로 골라냅니다. 같은 심사위원이 여러 번 보냈으면 <b>마지막 것</b>이 반영됩니다.)
+  </p>
+  <textarea id="inp" placeholder="여기에 붙여넣기…&#10;예) SNB41-J1-8794A6..."></textarea>
+  <div class="row">
+    <button class="primary" id="calcBtn">집계하기</button>
+    <button class="ghost" id="clearBtn">지우기</button>
+    <button class="green" id="tsvBtn">표 복사 (엑셀 붙여넣기)</button>
+    <button class="ghost" id="printBtn">인쇄 / PDF</button>
+  </div>
+  <div id="status"></div>
+</div>
+
+<div class="tblwrap"><table id="tbl"></table></div>
+
+</div>
+
+<script>
+var JUDGES = ["심사위원 1","심사위원 2","심사위원 3","심사위원 4","심사위원 5"];
+var ALPHA = "0123456789A";
+var KEY = "snb41_sum_v1";
+
+var TALKS = [
+ {s:1,n:1,t:"부비동 내시경 수술을 시행한 소아 만성 부비동염 환자 2예",w:"단국대병원 문민석"},
+ {s:1,n:2,t:"Nostril Stenosis Following Herpes Zoster Infection: A Case Report",w:"조선대병원 Abdullah M Aldosari"},
+ {s:1,n:3,t:"Repair of Nostril Stenosis: Case Series",w:"닥터진 이비인후과 진홍률"},
+ {s:1,n:4,t:"좌측 안면부 부종과 비배부의 화농성 분비물을 주소로 내원한 78세 여성 환자",w:"메리놀병원 박체현"},
+ {s:1,n:5,t:"비배부 이물과 관련된 지연성 염증 반응",w:"양산부산대병원 최재혁"},
+ {s:1,n:6,t:"비골 골절 폐쇄정복술에서 초음파의 활용: 증례 3예",w:"원주세브란스기독병원 전현종"},
+ {s:1,n:7,t:"Partial Epiglottectomy Restored Long-Term Noninvasive Ventilation Responsiveness…",w:"전남대병원 김환민"},
+ {s:1,n:8,t:"양측 눈물샘 비대 및 안구 돌출을 동반한 난치성 범부비동염 1예",w:"건양대병원 김익희"},
+ {s:2,n:9,t:"Both Nasal Obstruction를 주소로 내원한 67세 남환 1예",w:"대전성모병원 이현석"},
+ {s:2,n:10,t:"좌측 하안검 종물을 주소로 내원한 63세 남자",w:"삼성창원병원 이민주"},
+ {s:2,n:11,t:"조기 국소 재발한 비강 점막 악성 흑색종 1예",w:"동아대병원 서민호"},
+ {s:2,n:12,t:"Wide Excision and Staged Reconstruction Using a Paramedian Forehead Flap…",w:"고신대복음병원 최종현"},
+ {s:2,n:13,t:"부비동내시경수술과 구개회전피판술을 이용한 Oroantral Fistula 치험 1예",w:"BS숨이비인후과 김무건"},
+ {s:2,n:14,t:"뇌 MRI 상 이상소견으로 의뢰된 32세 남자",w:"해운대백병원 서태경"},
+ {s:2,n:15,t:"안면 통증을 주소로 내원한 78세 여자",w:"창원경상국립대병원 차현철"},
+ {s:2,n:16,t:"ANCA-Negative Destructive Sinonasal Lesion and Upper Airway Narrowing…",w:"부산대병원 김숙진"}
+];
+var SESNAME = {1:"Session 1 (14:30-15:50) · 좌장 인제대 해운대백병원 김용완",
+               2:"Session 2 (16:10-17:30) · 좌장 BS 숨이비인후과 노환중"};
+
+function csum(s){
+  var t=0; for(var i=0;i<s.length;i++){ t=(t*31+s.charCodeAt(i))%1296; }
+  var r=t.toString(36).toUpperCase(); return r.length<2 ? "0"+r : r;
+}
+function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+
+var lastData = null;
+
+function parse(text){
+  var re = /SNB41[-\s]*J\s*([1-5])\s*[-\s]\s*([0-9Aa]{48})\s*[-\s]\s*([0-9A-Za-z]{2})/g;
+  var found = {}, bad = 0, m;
+  while((m = re.exec(text)) !== null){
+    var j = parseInt(m[1],10);
+    var body = m[2].toUpperCase();
+    var chk = m[3].toUpperCase();
+    if(csum(body) !== chk){ bad++; continue; }
+    var arr = [];
+    for(var i=0;i<48;i++){ arr.push(ALPHA.indexOf(body.charAt(i))); }
+    found[j] = arr;   // 뒤에 나온 것이 덮어씀 = 마지막 제출 반영
+  }
+  return {found:found, bad:bad};
+}
+
+function calc(){
+  var text = document.getElementById("inp").value;
+  try{ localStorage.setItem(KEY, text); }catch(e){}
+  var r = parse(text);
+  var present = [];
+  for(var j=1;j<=5;j++){ if(r.found[j]) present.push(j); }
+
+  var chips = "";
+  for(var j=1;j<=5;j++){
+    chips += "<span class='chip " + (r.found[j] ? "in" : "out") + "'>" +
+             JUDGES[j-1] + (r.found[j] ? " ✓" : " 미제출") + "</span>";
+  }
+  var st = document.getElementById("status");
+  st.innerHTML = "인식된 심사위원 <b>" + present.length + " / 5명</b><br>" + chips +
+    (r.bad ? "<div style='color:#b45309;margin-top:6px'>손상된 코드 " + r.bad +
+             "건은 제외했습니다. 해당 심사위원께 다시 보내달라고 요청해 주십시오.</div>" : "");
+
+  // 연제별 계산
+  var rows = TALKS.map(function(tk, idx){
+    var per = [];
+    for(var j=1;j<=5;j++){
+      if(!r.found[j]){ per.push(null); continue; }
+      var a = r.found[j];
+      per.push(a[idx*3] + a[idx*3+1] + a[idx*3+2]);
+    }
+    var vals = per.filter(function(v){ return v !== null; });
+    var tot = vals.reduce(function(a,b){ return a+b; }, 0);
+    var avg = vals.length ? (tot / vals.length) : 0;
+    return {tk:tk, per:per, tot:tot, avg:avg};
+  });
+  // 순위 (합계 기준, 동점 동순위)
+  var sorted = rows.slice().sort(function(a,b){ return b.tot - a.tot; });
+  rows.forEach(function(row){
+    row.rank = row.tot > 0 ? (sorted.findIndex(function(x){ return x.tot === row.tot; }) + 1) : 0;
+  });
+
+  lastData = {rows:rows, present:present};
+  render(rows, present);
+}
+
+function render(rows, present){
+  var h = "<thead><tr><th>연제</th><th>제목</th><th>발표</th>";
+  for(var j=1;j<=5;j++){
+    h += "<th>" + esc(JUDGES[j-1]) + (present.indexOf(j)<0 ? "<br><span style='font-weight:400;font-size:11px;color:#9ca3af'>미제출</span>" : "") + "</th>";
+  }
+  h += "<th>합계</th><th>평균</th><th>순위</th></tr></thead><tbody>";
+
+  var curSes = 0;
+  rows.forEach(function(row){
+    if(row.tk.s !== curSes){
+      curSes = row.tk.s;
+      h += "<tr class='sesrow'><td colspan='11'>" + esc(SESNAME[curSes]) + "</td></tr>";
+    }
+    var cls = row.rank===1 ? "r1" : (row.rank===2 || row.rank===3 ? "r"+row.rank : "");
+    h += "<tr class='" + cls + "'>";
+    h += "<td class='c'><b>" + row.tk.n + "</b></td>";
+    h += "<td class='title'>" + esc(row.tk.t) + "</td>";
+    h += "<td class='who'>" + esc(row.tk.w) + "</td>";
+    row.per.forEach(function(v){
+      h += "<td class='c'>" + (v === null ? "<span class='empty'>·</span>" : v) + "</td>";
+    });
+    h += "<td class='c tot'>" + row.tot + "</td>";
+    h += "<td class='c'>" + (row.avg ? row.avg.toFixed(1) : "-") + "</td>";
+    h += "<td class='c rank'>" + (row.rank || "-") + "</td>";
+    h += "</tr>";
+  });
+  h += "</tbody>";
+  var maxTot = present.length * 30;
+  h += "<tfoot><tr><td colspan='11' style='font-size:12px;color:#6b7280;background:#fafbfc'>" +
+       "연제당 만점 30점(3개 항목 × 10점) · 제출 심사위원 " + present.length +
+       "명 기준 만점 " + maxTot + "점 · 1위 노랑, 2~3위 연두 표시" +
+       "</td></tr></tfoot>";
+  document.getElementById("tbl").innerHTML = h;
+}
+
+document.getElementById("calcBtn").onclick = calc;
+document.getElementById("clearBtn").onclick = function(){
+  document.getElementById("inp").value = "";
+  document.getElementById("status").innerHTML = "";
+  document.getElementById("tbl").innerHTML = "";
+  try{ localStorage.removeItem(KEY); }catch(e){}
+};
+document.getElementById("printBtn").onclick = function(){ window.print(); };
+document.getElementById("tsvBtn").onclick = function(){
+  if(!lastData){ alert("먼저 [집계하기]를 눌러 주십시오."); return; }
+  var lines = [];
+  var head = ["연제","제목","발표"].concat(JUDGES).concat(["합계","평균","순위"]);
+  lines.push(head.join("\t"));
+  lastData.rows.forEach(function(row){
+    var c = [row.tk.n, row.tk.t, row.tk.w];
+    row.per.forEach(function(v){ c.push(v === null ? "" : v); });
+    c.push(row.tot, row.avg ? row.avg.toFixed(1) : "", row.rank || "");
+    lines.push(c.join("\t"));
+  });
+  var tsv = lines.join("\n");
+  var ta = document.createElement("textarea");
+  ta.value = tsv; document.body.appendChild(ta);
+  ta.select(); ta.setSelectionRange(0, 999999);
+  var ok = false;
+  try{ ok = document.execCommand("copy"); }catch(e){}
+  document.body.removeChild(ta);
+  if(!ok && navigator.clipboard){ navigator.clipboard.writeText(tsv); ok = true; }
+  alert(ok ? "표를 복사했습니다. 엑셀에 그대로 붙여넣으십시오." : "복사에 실패했습니다.");
+};
+
+try{
+  var saved = localStorage.getItem(KEY);
+  if(saved){ document.getElementById("inp").value = saved; calc(); }
+}catch(e){}
+</script>
+</body>
+</html>
