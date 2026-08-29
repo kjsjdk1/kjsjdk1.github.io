@@ -7,36 +7,46 @@
 <title>제41회 삼남비과포럼 채점 집계</title>
 <style>
   :root{ --bg:#f4f5f7; --card:#fff; --line:#e3e6ea; --ink:#1a1d21; --sub:#6b7280;
-         --accent:#1f5faa; --ok:#16794c; }
+         --accent:#1f5faa; --ok:#16794c; --warn:#b45309; }
   *{box-sizing:border-box;}
   body{margin:0; background:var(--bg); color:var(--ink);
     font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic","맑은 고딕",sans-serif;
     font-size:14px; line-height:1.5;}
-  header{background:var(--accent); color:#fff; padding:14px 16px;}
+  header{background:var(--accent); color:#fff; padding:14px 16px; display:flex;
+         align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;}
   header h1{margin:0; font-size:17px; font-weight:700;}
   header p{margin:4px 0 0; font-size:12px; opacity:.85;}
-  .wrap{max-width:1100px; margin:0 auto; padding:14px 12px 60px;}
+  #live{font-size:12px; background:rgba(255,255,255,.16); padding:6px 12px; border-radius:99px;
+        white-space:nowrap; font-weight:600;}
+  #live .dot{display:inline-block; width:8px; height:8px; border-radius:50%; background:#7ee2a8;
+             margin-right:6px; vertical-align:-1px;}
+  #live.off .dot{background:#f0b7b7;}
+  .wrap{max-width:1150px; margin:0 auto; padding:14px 12px 60px;}
   .card{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px; margin-bottom:14px;}
-  .card h2{margin:0 0 6px; font-size:15px;}
+  .card h2{margin:0 0 8px; font-size:15px;}
   .card p.hint{margin:0 0 10px; font-size:12.5px; color:var(--sub);}
-  textarea{width:100%; height:150px; border:1px solid var(--line); border-radius:10px;
-    padding:10px; font-family:ui-monospace,Menlo,Consolas,monospace; font-size:12.5px; background:#fafbfc;}
-  .row{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;}
-  button{padding:11px 18px; border:none; border-radius:10px; font-size:14px; font-weight:700; cursor:pointer;}
+  .row{display:flex; gap:8px; flex-wrap:wrap; align-items:center;}
+  button{padding:10px 16px; border:none; border-radius:10px; font-size:13.5px; font-weight:700; cursor:pointer;}
   .primary{background:var(--accent); color:#fff;}
   .ghost{background:#eef1f4; color:#374151;}
   .green{background:var(--ok); color:#fff;}
-  #status{margin-top:10px; font-size:13px; font-weight:600;}
-  .chip{display:inline-block; padding:4px 10px; border-radius:99px; font-size:12px;
-        font-weight:700; margin:3px 4px 0 0;}
-  .chip.in{background:#e6f4ec; color:#116e45;}
-  .chip.out{background:#f3f4f6; color:#9ca3af;}
+  textarea{width:100%; height:110px; border:1px solid var(--line); border-radius:10px; margin-top:8px;
+    padding:10px; font-family:ui-monospace,Menlo,Consolas,monospace; font-size:12.5px; background:#fafbfc;}
+  details summary{font-size:13px; font-weight:700; color:var(--sub); cursor:pointer;}
+
+  .chips{display:flex; gap:8px; flex-wrap:wrap;}
+  .chip{border:1px solid var(--line); border-radius:10px; padding:8px 12px; min-width:118px; background:#fafbfc;}
+  .chip .nm{font-weight:800; font-size:13.5px;}
+  .chip .st{font-size:11.5px; margin-top:2px; color:#9ca3af; font-weight:600;}
+  .chip.in{background:#eaf6ef; border-color:#bfe3d0;}
+  .chip.in .st{color:#116e45;}
+
   .tblwrap{overflow-x:auto; -webkit-overflow-scrolling:touch;}
   table{border-collapse:collapse; width:100%; min-width:900px; font-size:13px; background:#fff;}
   th,td{border:1px solid var(--line); padding:7px 8px;}
   th{background:#e8eef7; font-weight:700; text-align:center; white-space:nowrap;}
   td.c{text-align:center;}
-  td.title{min-width:300px; word-break:keep-all;}
+  td.title{min-width:290px; word-break:keep-all;}
   td.who{color:var(--sub); font-size:12px; white-space:nowrap;}
   td.tot{font-weight:800; background:#f7f9fc;}
   tr.r1 td{background:#fff6d9 !important;}
@@ -44,6 +54,7 @@
   td.rank{font-weight:800;}
   .sesrow td{background:#dde6f2 !important; font-weight:700; color:#173c68; font-size:12.5px;}
   .empty{color:#c7ccd3;}
+  .det{font-size:10.5px; color:#9ca3af; display:block;}
   @media print{
     header,.card,#tools{display:none !important;}
     body{background:#fff;} .wrap{padding:0;} table{min-width:0; font-size:11px;}
@@ -53,26 +64,41 @@
 <body>
 
 <header>
-  <h1>제41회 삼남비과포럼 자유연제 채점 집계</h1>
-  <p>심사위원 5명 결과코드 → 연제별 합계·순위 자동 계산</p>
+  <div>
+    <h1>제41회 삼남비과포럼 자유연제 채점 집계</h1>
+    <p>심사위원 제출 즉시 자동 반영 · 연제별 합계 / 평균 / 순위</p>
+  </div>
+  <div id="live"><span class="dot"></span><span id="liveTxt">연결 중…</span></div>
 </header>
 
 <div class="wrap">
 
-<div class="card" id="tools">
-  <h2>결과코드 붙여넣기</h2>
-  <p class="hint">
-    카카오톡 심사위원 단체방의 대화를 <b>전체 복사해서 그대로</b> 붙여넣으셔도 됩니다.
-    (SNB41-J… 로 시작하는 코드만 자동으로 골라냅니다. 같은 심사위원이 여러 번 보냈으면 <b>마지막 것</b>이 반영됩니다.)
-  </p>
-  <textarea id="inp" placeholder="여기에 붙여넣기…&#10;예) SNB41-J1-8794A6..."></textarea>
-  <div class="row">
-    <button class="primary" id="calcBtn">집계하기</button>
-    <button class="ghost" id="clearBtn">지우기</button>
-    <button class="green" id="tsvBtn">표 복사 (엑셀 붙여넣기)</button>
+<div class="card">
+  <h2>제출 현황</h2>
+  <div class="chips" id="chips"></div>
+  <div class="row" style="margin-top:12px">
+    <button class="primary" id="refreshBtn">지금 새로고침</button>
+    <button class="ghost" id="autoBtn">자동 새로고침 끄기</button>
+    <button class="green" id="tsvBtn">표 복사 (엑셀)</button>
+    <button class="ghost" id="detBtn">항목별 상세 보기</button>
     <button class="ghost" id="printBtn">인쇄 / PDF</button>
   </div>
-  <div id="status"></div>
+</div>
+
+<div class="card" id="tools">
+  <details>
+    <summary>백업 입력 — 심사위원이 카톡으로 보낸 결과코드 붙여넣기</summary>
+    <p class="hint" style="margin-top:8px">
+      통신 문제로 자동 전송이 안 된 심사위원의 코드를 여기에 붙여넣으십시오.
+      카톡 대화를 통째로 붙여넣어도 <code>SNB41-J…</code> 코드만 골라냅니다.
+      <b>자동 전송으로 이미 들어온 심사위원은 자동 전송분이 우선</b>합니다.
+    </p>
+    <textarea id="inp" placeholder="여기에 붙여넣기…"></textarea>
+    <div class="row" style="margin-top:8px">
+      <button class="primary" id="calcBtn">반영하기</button>
+      <button class="ghost" id="clearBtn">지우기</button>
+    </div>
+  </details>
 </div>
 
 <div class="tblwrap"><table id="tbl"></table></div>
@@ -81,8 +107,12 @@
 
 <script>
 var JUDGES = ["김용민","정한진","허성재","남정권","조재훈"];
+var CRIT = ["①독창성","②발표·자료","③임상유용"];
 var ALPHA = "0123456789A";
-var KEY = "snb41_sum_v1";
+var KEY = "snb41_sum_v2";
+var TOPIC = "snb41-k7d92mq4xv3b";                 // 채점 페이지와 동일해야 함
+var FEED = "https://ntfy.sh/" + TOPIC + "/json?poll=1&since=all";
+var POLL_MS = 8000;
 
 var TALKS = [
  {s:1,n:1,t:"부비동 내시경 수술을 시행한 소아 만성 부비동염 환자 2예",w:"단국대병원 문민석"},
@@ -110,116 +140,168 @@ function csum(s){
   var r=t.toString(36).toUpperCase(); return r.length<2 ? "0"+r : r;
 }
 function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
-
-var lastData = null;
-
-function parse(text){
-  var re = /SNB41[-\s]*J\s*([1-5])\s*[-\s]\s*([0-9Aa]{48})\s*[-\s]\s*([0-9A-Za-z]{2})/g;
-  var found = {}, bad = 0, m;
-  while((m = re.exec(text)) !== null){
-    var j = parseInt(m[1],10);
-    var body = m[2].toUpperCase();
-    var chk = m[3].toUpperCase();
-    if(csum(body) !== chk){ bad++; continue; }
-    var arr = [];
-    for(var i=0;i<48;i++){ arr.push(ALPHA.indexOf(body.charAt(i))); }
-    found[j] = arr;   // 뒤에 나온 것이 덮어씀 = 마지막 제출 반영
-  }
-  return {found:found, bad:bad};
+function hhmm(ms){
+  var d=new Date(ms), h=d.getHours(), m=d.getMinutes();
+  return (h<12?"오전 ":"오후 ") + ((h%12)||12) + ":" + (m<10?"0":"") + m;
 }
 
-function calc(){
-  var text = document.getElementById("inp").value;
-  try{ localStorage.setItem(KEY, text); }catch(e){}
-  var r = parse(text);
-  var present = [];
-  for(var j=1;j<=5;j++){ if(r.found[j]) present.push(j); }
+var CODE_RE = /SNB41[-\s]*J\s*([1-5])\s*[-\s]\s*([0-9Aa]{48})\s*[-\s]\s*([0-9A-Za-z]{2})/g;
 
-  var chips = "";
-  for(var j=1;j<=5;j++){
-    chips += "<span class='chip " + (r.found[j] ? "in" : "out") + "'>" +
-             JUDGES[j-1] + (r.found[j] ? " ✓" : " 미제출") + "</span>";
+function extract(text){          // → {judge: scores[48]}
+  CODE_RE.lastIndex = 0;
+  var out = {}, m;
+  while((m = CODE_RE.exec(text)) !== null){
+    var body = m[2].toUpperCase();
+    if(csum(body) !== m[3].toUpperCase()) continue;
+    var arr = [];
+    for(var i=0;i<48;i++){ arr.push(ALPHA.indexOf(body.charAt(i))); }
+    out[parseInt(m[1],10)] = arr;
   }
-  var st = document.getElementById("status");
-  st.innerHTML = "인식된 심사위원 <b>" + present.length + " / 5명</b><br>" + chips +
-    (r.bad ? "<div style='color:#b45309;margin-top:6px'>손상된 코드 " + r.bad +
-             "건은 제외했습니다. 해당 심사위원께 다시 보내달라고 요청해 주십시오.</div>" : "");
+  return out;
+}
 
-  // 연제별 계산
+var live = {};       // judge → {sc:[], at:ms}
+var manual = {};     // judge → sc[]
+var auto = true, lastOk = 0, showDet = false, lastData = null;
+
+function pull(){
+  fetch(FEED + "&_=" + Date.now(), {cache:"no-store"})
+    .then(function(r){ if(!r.ok) throw 0; return r.text(); })
+    .then(function(txt){
+      var next = {};
+      txt.split("\n").forEach(function(line){
+        if(!line.trim()) return;
+        var o; try{ o = JSON.parse(line); }catch(e){ return; }
+        if(o.event !== "message" || !o.message) return;
+        var got = extract(o.message);
+        for(var j in got){ next[j] = {sc:got[j], at:(o.time||0)*1000}; }   // 뒤 = 최신
+      });
+      live = next; lastOk = Date.now();
+      setLive(true, "실시간 연결됨 · " + hhmm(lastOk) + " 갱신");
+      render();
+    })
+    .catch(function(){
+      setLive(false, lastOk ? "연결 끊김 · 마지막 " + hhmm(lastOk) : "연결 실패");
+    });
+}
+function setLive(on, txt){
+  document.getElementById("live").className = on ? "" : "off";
+  document.getElementById("liveTxt").textContent = txt;
+}
+
+function merged(){
+  var out = {};
+  for(var j=1;j<=5;j++){
+    if(live[j]) out[j] = {sc:live[j].sc, at:live[j].at, src:"auto"};
+    else if(manual[j]) out[j] = {sc:manual[j], at:0, src:"manual"};
+  }
+  return out;
+}
+
+function render(){
+  var mg = merged();
+  var present = [];
+  for(var j=1;j<=5;j++){ if(mg[j]) present.push(j); }
+
+  // 제출 현황
+  var ch = "";
+  for(var j=1;j<=5;j++){
+    var g = mg[j];
+    var tot = g ? g.sc.reduce(function(a,b){return a+b;},0) : 0;
+    var full = 0;
+    if(g){ for(var i=0;i<16;i++){ if(g.sc[i*3] && g.sc[i*3+1] && g.sc[i*3+2]) full++; } }
+    ch += "<div class='chip " + (g ? "in" : "") + "'><div class='nm'>" + esc(JUDGES[j-1]) + "</div>" +
+      "<div class='st'>" + (g
+        ? (g.src === "auto" ? hhmm(g.at) + " 제출" : "수동 입력") + " · " + full + "/16 · " + tot + "점"
+        : "미제출") + "</div></div>";
+  }
+  document.getElementById("chips").innerHTML = ch;
+
+  // 연제별
   var rows = TALKS.map(function(tk, idx){
-    var per = [];
+    var per = [], det = [];
     for(var j=1;j<=5;j++){
-      if(!r.found[j]){ per.push(null); continue; }
-      var a = r.found[j];
-      per.push(a[idx*3] + a[idx*3+1] + a[idx*3+2]);
+      if(!mg[j]){ per.push(null); det.push(null); continue; }
+      var a = mg[j].sc, x = a[idx*3], y = a[idx*3+1], z = a[idx*3+2];
+      per.push(x+y+z); det.push([x,y,z]);
     }
     var vals = per.filter(function(v){ return v !== null; });
     var tot = vals.reduce(function(a,b){ return a+b; }, 0);
-    var avg = vals.length ? (tot / vals.length) : 0;
-    return {tk:tk, per:per, tot:tot, avg:avg};
+    return {tk:tk, per:per, det:det, tot:tot, avg:(vals.length ? tot/vals.length : 0)};
   });
-  // 순위 (합계 기준, 동점 동순위)
   var sorted = rows.slice().sort(function(a,b){ return b.tot - a.tot; });
-  rows.forEach(function(row){
-    row.rank = row.tot > 0 ? (sorted.findIndex(function(x){ return x.tot === row.tot; }) + 1) : 0;
+  rows.forEach(function(r){
+    r.rank = r.tot > 0 ? (sorted.findIndex(function(x){ return x.tot === r.tot; }) + 1) : 0;
   });
-
   lastData = {rows:rows, present:present};
-  render(rows, present);
-}
 
-function render(rows, present){
   var h = "<thead><tr><th>연제</th><th>제목</th><th>발표</th>";
   for(var j=1;j<=5;j++){
-    h += "<th>" + esc(JUDGES[j-1]) + (present.indexOf(j)<0 ? "<br><span style='font-weight:400;font-size:11px;color:#9ca3af'>미제출</span>" : "") + "</th>";
+    h += "<th>" + esc(JUDGES[j-1]) +
+      (present.indexOf(j) < 0 ? "<br><span style='font-weight:400;font-size:11px;color:#9ca3af'>미제출</span>" : "") +
+      "</th>";
   }
   h += "<th>합계</th><th>평균</th><th>순위</th></tr></thead><tbody>";
-
   var curSes = 0;
-  rows.forEach(function(row){
-    if(row.tk.s !== curSes){
-      curSes = row.tk.s;
+  rows.forEach(function(r){
+    if(r.tk.s !== curSes){
+      curSes = r.tk.s;
       h += "<tr class='sesrow'><td colspan='11'>" + esc(SESNAME[curSes]) + "</td></tr>";
     }
-    var cls = row.rank===1 ? "r1" : (row.rank===2 || row.rank===3 ? "r"+row.rank : "");
-    h += "<tr class='" + cls + "'>";
-    h += "<td class='c'><b>" + row.tk.n + "</b></td>";
-    h += "<td class='title'>" + esc(row.tk.t) + "</td>";
-    h += "<td class='who'>" + esc(row.tk.w) + "</td>";
-    row.per.forEach(function(v){
-      h += "<td class='c'>" + (v === null ? "<span class='empty'>·</span>" : v) + "</td>";
+    var cls = r.rank===1 ? "r1" : (r.rank===2 || r.rank===3 ? "r"+r.rank : "");
+    h += "<tr class='" + cls + "'><td class='c'><b>" + r.tk.n + "</b></td>" +
+         "<td class='title'>" + esc(r.tk.t) + "</td><td class='who'>" + esc(r.tk.w) + "</td>";
+    r.per.forEach(function(v, k){
+      if(v === null){ h += "<td class='c'><span class='empty'>·</span></td>"; return; }
+      h += "<td class='c'>" + v +
+           (showDet ? "<span class='det'>" + r.det[k].join(" / ") + "</span>" : "") + "</td>";
     });
-    h += "<td class='c tot'>" + row.tot + "</td>";
-    h += "<td class='c'>" + (row.avg ? row.avg.toFixed(1) : "-") + "</td>";
-    h += "<td class='c rank'>" + (row.rank || "-") + "</td>";
-    h += "</tr>";
+    h += "<td class='c tot'>" + r.tot + "</td><td class='c'>" + (r.avg ? r.avg.toFixed(1) : "-") +
+         "</td><td class='c rank'>" + (r.rank || "-") + "</td></tr>";
   });
-  h += "</tbody>";
-  var maxTot = present.length * 30;
-  h += "<tfoot><tr><td colspan='11' style='font-size:12px;color:#6b7280;background:#fafbfc'>" +
-       "연제당 만점 30점(3개 항목 × 10점) · 제출 심사위원 " + present.length +
-       "명 기준 만점 " + maxTot + "점 · 1위 노랑, 2~3위 연두 표시" +
+  h += "</tbody><tfoot><tr><td colspan='11' style='font-size:12px;color:#6b7280;background:#fafbfc'>" +
+       "연제당 만점 30점(3개 항목 × 10점) · 제출 " + present.length + "명 기준 만점 " +
+       (present.length*30) + "점 · 1위 노랑, 2~3위 연두" +
+       (showDet ? " · 작은 숫자는 " + CRIT.join(" / ") : "") +
        "</td></tr></tfoot>";
   document.getElementById("tbl").innerHTML = h;
 }
 
-document.getElementById("calcBtn").onclick = calc;
-document.getElementById("clearBtn").onclick = function(){
-  document.getElementById("inp").value = "";
-  document.getElementById("status").innerHTML = "";
-  document.getElementById("tbl").innerHTML = "";
-  try{ localStorage.removeItem(KEY); }catch(e){}
+/* 컨트롤 */
+document.getElementById("refreshBtn").onclick = pull;
+document.getElementById("autoBtn").onclick = function(){
+  auto = !auto;
+  this.textContent = auto ? "자동 새로고침 끄기" : "자동 새로고침 켜기";
+  if(auto) pull();
+};
+document.getElementById("detBtn").onclick = function(){
+  showDet = !showDet;
+  this.textContent = showDet ? "항목별 상세 숨기기" : "항목별 상세 보기";
+  render();
 };
 document.getElementById("printBtn").onclick = function(){ window.print(); };
+document.getElementById("calcBtn").onclick = function(){
+  var txt = document.getElementById("inp").value;
+  try{ localStorage.setItem(KEY, txt); }catch(e){}
+  manual = extract(txt);
+  render();
+  var n = Object.keys(manual).length;
+  alert(n ? n + "명의 결과코드를 반영했습니다." : "인식된 결과코드가 없습니다. 코드가 잘리지 않았는지 확인해 주십시오.");
+};
+document.getElementById("clearBtn").onclick = function(){
+  document.getElementById("inp").value = "";
+  manual = {};
+  try{ localStorage.removeItem(KEY); }catch(e){}
+  render();
+};
 document.getElementById("tsvBtn").onclick = function(){
-  if(!lastData){ alert("먼저 [집계하기]를 눌러 주십시오."); return; }
-  var lines = [];
-  var head = ["연제","제목","발표"].concat(JUDGES).concat(["합계","평균","순위"]);
+  if(!lastData){ return; }
+  var lines = [], head = ["연제","제목","발표"].concat(JUDGES).concat(["합계","평균","순위"]);
   lines.push(head.join("\t"));
-  lastData.rows.forEach(function(row){
-    var c = [row.tk.n, row.tk.t, row.tk.w];
-    row.per.forEach(function(v){ c.push(v === null ? "" : v); });
-    c.push(row.tot, row.avg ? row.avg.toFixed(1) : "", row.rank || "");
+  lastData.rows.forEach(function(r){
+    var c = [r.tk.n, r.tk.t, r.tk.w];
+    r.per.forEach(function(v){ c.push(v === null ? "" : v); });
+    c.push(r.tot, r.avg ? r.avg.toFixed(1) : "", r.rank || "");
     lines.push(c.join("\t"));
   });
   var tsv = lines.join("\n");
@@ -230,13 +312,17 @@ document.getElementById("tsvBtn").onclick = function(){
   try{ ok = document.execCommand("copy"); }catch(e){}
   document.body.removeChild(ta);
   if(!ok && navigator.clipboard){ navigator.clipboard.writeText(tsv); ok = true; }
-  alert(ok ? "표를 복사했습니다. 엑셀에 그대로 붙여넣으십시오." : "복사에 실패했습니다.");
+  alert(ok ? "표를 복사했습니다. 엑셀에 붙여넣으십시오." : "복사에 실패했습니다.");
 };
 
 try{
   var saved = localStorage.getItem(KEY);
-  if(saved){ document.getElementById("inp").value = saved; calc(); }
+  if(saved){ document.getElementById("inp").value = saved; manual = extract(saved); }
 }catch(e){}
+
+render();
+pull();
+setInterval(function(){ if(auto) pull(); }, POLL_MS);
 </script>
 </body>
 </html>

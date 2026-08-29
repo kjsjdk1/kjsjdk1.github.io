@@ -8,13 +8,13 @@
 <style>
   :root{
     --bg:#f4f5f7; --card:#fff; --line:#e3e6ea; --ink:#1a1d21; --sub:#6b7280;
-    --accent:#1f5faa; --accent-soft:#e8f0fa; --ok:#16794c; --warn:#b45309;
+    --accent:#1f5faa; --accent-soft:#e8f0fa; --ok:#16794c; --warn:#b45309; --bad:#b4241f;
   }
   *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
   body{margin:0; background:var(--bg); color:var(--ink);
        font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic","맑은 고딕",sans-serif;
-       font-size:15px; line-height:1.5; padding-bottom:120px;}
-  header{background:var(--accent); color:#fff; padding:14px 16px calc(14px + env(safe-area-inset-top)); }
+       font-size:15px; line-height:1.5; padding-bottom:124px;}
+  header{background:var(--accent); color:#fff; padding:14px 16px calc(14px + env(safe-area-inset-top));}
   header h1{margin:0; font-size:17px; font-weight:700; letter-spacing:-0.3px;}
   header p{margin:4px 0 0; font-size:12px; opacity:.85;}
 
@@ -30,8 +30,9 @@
     border:1.5px solid var(--line); background:#fff; color:var(--ink); line-height:1.25;
     word-break:keep-all;}
   .jgrid button .jn{display:block; font-size:10.5px; font-weight:600; color:var(--sub); margin-bottom:1px;}
-  .jgrid button.on .jn{color:#cfe0f5;}
   .jgrid button.on{background:var(--accent); border-color:var(--accent); color:#fff;}
+  .jgrid button.on .jn{color:#cfe0f5;}
+  .privacy{margin:8px 0 0; font-size:11.5px; color:var(--sub); line-height:1.45;}
 
   /* 진행바 */
   #bar{position:sticky; top:0; z-index:20; background:rgba(244,245,247,.96);
@@ -40,7 +41,11 @@
             font-size:13px; font-weight:600;}
   #bar .track{flex:1; height:7px; background:#dfe3e8; border-radius:99px; overflow:hidden;}
   #bar .fill{height:100%; width:0%; background:var(--ok); transition:width .2s;}
-  #whoTag{color:var(--accent); font-weight:700;}
+  #whoTag{color:var(--accent); font-weight:700; white-space:nowrap;}
+  #sentTag{font-size:11px; font-weight:700; padding:2px 7px; border-radius:99px; white-space:nowrap;}
+  #sentTag.ok{background:#e6f4ec; color:#116e45;}
+  #sentTag.dirty{background:#fdf0e0; color:#8a5a00;}
+  #sentTag.none{display:none;}
 
   /* 세션 */
   .ses{margin:18px 0 8px; padding:8px 12px; background:#dde6f2; border-radius:8px;
@@ -76,27 +81,38 @@
   #foot .row{max-width:640px; margin:0 auto; display:flex; gap:8px;}
   .btn{flex:1; padding:14px 0; border-radius:11px; border:none; font-size:15px;
        font-weight:800; background:var(--accent); color:#fff;}
-  .btn.ghost{flex:0 0 96px; background:#eef1f4; color:#374151; font-weight:700; font-size:13.5px;}
-  #msg{max-width:640px; margin:0 auto 8px; font-size:12.5px; color:var(--warn); text-align:center;}
+  .btn:disabled{opacity:.55;}
+  .btn.dirty{background:var(--warn);}
+  .btn.ghost{flex:0 0 88px; background:#eef1f4; color:#374151; font-weight:700; font-size:13.5px;}
+  #msg{max-width:640px; margin:0 auto 7px; font-size:12px; text-align:center; color:var(--sub);}
 
   /* 결과 모달 */
   #modal{position:fixed; inset:0; z-index:50; background:rgba(0,0,0,.55); display:none;
          align-items:flex-end; justify-content:center;}
   #modal.show{display:flex;}
   #sheet{background:#fff; width:100%; max-width:640px; border-radius:16px 16px 0 0;
-         padding:18px 16px calc(18px + env(safe-area-inset-bottom)); max-height:88vh; overflow:auto;}
-  #sheet h3{margin:0 0 6px; font-size:16px;}
-  #sheet p{margin:0 0 10px; font-size:13px; color:var(--sub);}
-  #code{width:100%; height:132px; font-family:ui-monospace,Menlo,Consolas,monospace;
+         padding:20px 16px calc(20px + env(safe-area-inset-bottom)); max-height:88vh; overflow:auto;}
+  #sheet h3{margin:0 0 8px; font-size:17px;}
+  #sheet p{margin:0 0 10px; font-size:13.5px; color:#374151;}
+  .big{text-align:center; padding:14px 0 4px;}
+  .big .ico{font-size:42px; line-height:1;}
+  .big .t1{font-size:17px; font-weight:800; margin-top:8px;}
+  .big .t2{font-size:13px; color:var(--sub); margin-top:4px;}
+  .ok .t1{color:var(--ok);} .fail .t1{color:var(--bad);}
+  #code{width:100%; height:96px; font-family:ui-monospace,Menlo,Consolas,monospace;
         font-size:12.5px; line-height:1.45; border:1px solid var(--line); border-radius:10px;
-        padding:10px; background:#fafbfc; color:#111; -webkit-user-select:all; user-select:all;}
-  .mrow{display:flex; gap:8px; margin-top:10px;}
+        padding:10px; background:#fafbfc; color:#111; -webkit-user-select:all; user-select:all;
+        margin-top:6px;}
+  .mrow{display:flex; gap:8px; margin-top:12px;}
   .mrow button{flex:1; padding:13px 0; border-radius:10px; border:none; font-size:14px; font-weight:700;}
+  #retryBtn{background:var(--accent); color:#fff;}
   #copyBtn{background:var(--ok); color:#fff;}
-  #closeBtn{background:#eef1f4; color:#374151; flex:0 0 90px;}
+  #closeBtn{background:#eef1f4; color:#374151;}
   #copied{font-size:13px; color:var(--ok); font-weight:700; text-align:center; margin-top:8px; min-height:18px;}
   .warnbox{background:#fff7e8; border:1px solid #f2d9a8; color:#8a5a00; border-radius:9px;
            padding:9px 11px; font-size:12.5px; margin-bottom:10px;}
+  .backup{margin-top:14px; border-top:1px dashed var(--line); padding-top:12px;}
+  .backup summary{font-size:13px; font-weight:700; color:var(--sub); cursor:pointer;}
 </style>
 </head>
 <body>
@@ -108,6 +124,7 @@
 
 <div id="bar"><div class="row">
   <span id="whoTag">심사위원 미선택</span>
+  <span id="sentTag" class="none"></span>
   <div class="track"><div class="fill" id="fill"></div></div>
   <span id="cnt">0/16</span>
 </div></div>
@@ -115,8 +132,10 @@
 <div class="wrap">
   <div id="judgeBox">
     <h2>심사위원을 선택해 주십시오</h2>
-    <p class="hint">선택 후 채점표가 나타납니다. 입력 내용은 이 휴대폰에 자동 저장되어, 실수로 창을 닫아도 그대로 복구됩니다.</p>
+    <p class="hint">선택 후 채점표가 나타납니다. 입력 내용은 이 휴대폰에 자동 저장되어, 창을 닫아도 그대로 복구됩니다.</p>
     <div class="jgrid" id="jgrid"></div>
+    <p class="privacy">※ 점수는 <b>제출 버튼을 누를 때만</b> 집계 담당자에게 전송됩니다.
+       다른 심사위원의 점수는 이 화면에 표시되지 않으며, 서로 볼 수 없습니다.</p>
   </div>
   <div id="list"></div>
 </div>
@@ -125,27 +144,21 @@
   <div id="msg"></div>
   <div class="row">
     <button class="btn ghost" id="resetBtn">초기화</button>
-    <button class="btn" id="doneBtn">채점 완료 · 결과 만들기</button>
+    <button class="btn" id="doneBtn">채점 제출하기</button>
   </div>
 </div>
 
 <div id="modal"><div id="sheet">
-  <h3>결과 코드</h3>
-  <p>아래 <b>[복사하기]</b>를 누른 뒤, <b>카카오톡 심사위원 단체방에 붙여넣어</b> 주십시오.</p>
-  <div id="warnbox"></div>
-  <textarea id="code" readonly></textarea>
-  <div class="mrow">
-    <button id="closeBtn">닫기</button>
-    <button id="copyBtn">복사하기</button>
-  </div>
-  <div id="copied"></div>
+  <div id="sheetBody"></div>
 </div></div>
 
 <script>
 var JUDGES = ["김용민","정한진","허성재","남정권","조재훈"];
 var CRIT = ["① 독창성·학술적 가치","② 발표 및 자료 구성","③ 임상적 유용성"];
 var ALPHA = "0123456789A";   // 0 = 미채점, A = 10점
-var KEY = "snb41_score_v1";
+var KEY = "snb41_score_v2";
+var TOPIC = "snb41-k7d92mq4xv3b";          // 전송 채널 (집계 페이지와 동일해야 함)
+var ENDPOINT = "https://ntfy.sh/" + TOPIC;
 
 var TALKS = [
  {s:1,n:1,t:"부비동 내시경 수술을 시행한 소아 만성 부비동염 환자 2예",w:"단국대병원 문민석"},
@@ -170,17 +183,16 @@ var SESINFO = {
  2:{name:"Session 2 · 16:10-17:30", chair:"좌장 : BS 숨이비인후과 노환중"}
 };
 
-var state = { judge:0, sc:{} };   // sc["3-1"] = 8
+var state = { judge:0, sc:{}, sentCode:"", sentAt:0 };
 
 function load(){
   try{
     var raw = localStorage.getItem(KEY);
     if(raw){ var o = JSON.parse(raw); if(o && o.sc){ state = o; } }
   }catch(e){}
+  if(!state.sentCode) state.sentCode = "";
 }
-function save(){
-  try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){}
-}
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){} }
 
 function el(tag, cls, html){
   var d = document.createElement(tag);
@@ -189,6 +201,10 @@ function el(tag, cls, html){
   return d;
 }
 function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+function hhmm(ms){
+  var d = new Date(ms), h = d.getHours(), m = d.getMinutes();
+  return (h<12?"오전 ":"오후 ") + ((h%12)||12) + ":" + (m<10?"0":"") + m;
+}
 
 /* 심사위원 버튼 */
 function renderJudges(){
@@ -197,10 +213,14 @@ function renderJudges(){
   for(var i=1;i<=JUDGES.length;i++){
     (function(i){
       var b = el("button", state.judge===i ? "on" : "",
-                 "<span class='jn'>" + i + "</span>" + JUDGES[i-1]);
+                 "<span class='jn'>" + i + "</span>" + esc(JUDGES[i-1]));
       b.onclick = function(){
+        if(state.judge && state.judge !== i && Object.keys(state.sc).length){
+          if(!confirm("다른 심사위원으로 바꾸면 이 휴대폰에 입력된 점수가 모두 지워집니다.\n계속할까요?")) return;
+          state.sc = {}; state.sentCode = ""; state.sentAt = 0;
+          TALKS.forEach(function(tk){ paintTalk(tk.n); });
+        }
         state.judge = i; save(); renderJudges(); updateBar();
-        document.getElementById("list").style.display = "";
         window.scrollTo({top:0});
       };
       g.appendChild(b);
@@ -233,8 +253,7 @@ function renderList(){
       var wrap = el("div","crit");
       var lab = el("div","cl");
       lab.appendChild(el("span","", esc(cn)));
-      var vv = el("span","cv empty","-");
-      vv.id = "v"+key;
+      var vv = el("span","cv empty","-"); vv.id = "v"+key;
       lab.appendChild(vv);
       wrap.appendChild(lab);
       var row = el("div","sc");
@@ -243,7 +262,7 @@ function renderList(){
           var b = el("button","", String(s));
           b.id = "b"+key+"-"+s;
           b.onclick = function(){
-            if(!state.judge){ alert("먼저 상단에서 심사위원을 선택해 주십시오."); return; }
+            if(!state.judge){ alert("먼저 상단에서 심사위원을 선택해 주십시오."); window.scrollTo({top:0}); return; }
             if(state.sc[key] === s){ delete state.sc[key]; } else { state.sc[key] = s; }
             save(); paintTalk(tk.n); updateBar();
           };
@@ -253,8 +272,7 @@ function renderList(){
       wrap.appendChild(row);
       card.appendChild(wrap);
     });
-    var sub = el("div","sub","소계 <b><span id='s"+tk.n+"'>0</span></b> / 30");
-    card.appendChild(sub);
+    card.appendChild(el("div","sub","소계 <b><span id='s"+tk.n+"'>0</span></b> / 30"));
     box.appendChild(card);
   });
   TALKS.forEach(function(tk){ paintTalk(tk.n); });
@@ -263,8 +281,7 @@ function renderList(){
 function paintTalk(n){
   var sum = 0, filled = 0;
   for(var ci=0; ci<3; ci++){
-    var key = n + "-" + ci;
-    var val = state.sc[key];
+    var key = n + "-" + ci, val = state.sc[key];
     var vv = document.getElementById("v"+key);
     if(val){ sum += val; filled++; vv.textContent = val + "점"; vv.className = "cv"; }
     else { vv.textContent = "-"; vv.className = "cv empty"; }
@@ -283,13 +300,6 @@ function doneCount(){
   });
   return c;
 }
-function updateBar(){
-  var c = doneCount();
-  document.getElementById("cnt").textContent = c + "/16";
-  document.getElementById("fill").style.width = (c/16*100) + "%";
-  document.getElementById("whoTag").textContent =
-    state.judge ? JUDGES[state.judge-1] : "심사위원 미선택";
-}
 
 /* 결과 코드 */
 function csum(s){
@@ -301,69 +311,146 @@ function csum(s){
 function buildCode(){
   var body = "";
   TALKS.forEach(function(tk){
-    for(var ci=0; ci<3; ci++){
-      var v = state.sc[tk.n+"-"+ci] || 0;
-      body += ALPHA.charAt(v);
-    }
+    for(var ci=0; ci<3; ci++){ body += ALPHA.charAt(state.sc[tk.n+"-"+ci] || 0); }
   });
   return "SNB41-J" + state.judge + "-" + body + "-" + csum(body);
 }
 function totalScore(){
-  var t = 0;
-  for(var k in state.sc){ t += state.sc[k]; }
-  return t;
+  var t = 0; for(var k in state.sc){ t += state.sc[k]; } return t;
 }
 
-document.getElementById("doneBtn").onclick = function(){
+function updateBar(){
+  var c = doneCount();
+  document.getElementById("cnt").textContent = c + "/16";
+  document.getElementById("fill").style.width = (c/16*100) + "%";
+  document.getElementById("whoTag").textContent = state.judge ? JUDGES[state.judge-1] : "심사위원 미선택";
+
+  var tag = document.getElementById("sentTag");
+  var btn = document.getElementById("doneBtn");
+  var msg = document.getElementById("msg");
+  var cur = state.judge ? buildCode() : "";
+
+  if(!state.sentCode){
+    tag.className = "none"; tag.textContent = "";
+    btn.className = "btn"; btn.textContent = "채점 제출하기";
+    msg.textContent = "제출하시면 집계 화면에 자동으로 반영됩니다.";
+  } else if(state.sentCode === cur){
+    tag.className = "ok"; tag.textContent = "제출됨";
+    btn.className = "btn"; btn.textContent = "다시 제출하기";
+    msg.innerHTML = "<span style='color:#16794c;font-weight:700'>" + hhmm(state.sentAt) +
+                    " 제출 완료</span> · 점수를 고치면 다시 제출해 주십시오.";
+  } else {
+    tag.className = "dirty"; tag.textContent = "변경됨";
+    btn.className = "btn dirty"; btn.textContent = "변경사항 제출하기";
+    msg.innerHTML = "<span style='color:#b45309;font-weight:700'>" + hhmm(state.sentAt) +
+                    " 제출 이후 점수가 바뀌었습니다 — 다시 제출해 주십시오.</span>";
+  }
+}
+
+/* 제출 */
+function openSheet(html){
+  document.getElementById("sheetBody").innerHTML = html;
+  document.getElementById("modal").className = "show";
+}
+function closeSheet(){ document.getElementById("modal").className = ""; }
+
+function backupBlock(code){
+  return "<details class='backup'><summary>전송이 안 될 때 (백업용 결과코드)</summary>" +
+    "<p style='margin-top:8px'>아래 코드를 복사해 <b>집계 담당자에게 카톡으로</b> 보내 주십시오.</p>" +
+    "<textarea id='code' readonly>" + esc(code) + "</textarea>" +
+    "<div class='mrow'><button id='copyBtn'>코드 복사하기</button></div>" +
+    "<div id='copied'></div></details>";
+}
+function wireBackup(){
+  var cb = document.getElementById("copyBtn");
+  if(!cb) return;
+  cb.onclick = function(){
+    var ta = document.getElementById("code"), ok = false;
+    try{
+      ta.removeAttribute("readonly"); ta.focus(); ta.select(); ta.setSelectionRange(0,99999);
+      ok = document.execCommand("copy"); ta.setAttribute("readonly","readonly");
+    }catch(e){}
+    if(!ok && navigator.clipboard){
+      navigator.clipboard.writeText(ta.value).then(function(){
+        document.getElementById("copied").textContent = "복사되었습니다.";
+      }).catch(function(){
+        document.getElementById("copied").textContent = "자동 복사 실패 — 글상자를 길게 눌러 복사해 주십시오.";
+      });
+      return;
+    }
+    document.getElementById("copied").textContent = ok ? "복사되었습니다."
+      : "자동 복사 실패 — 글상자를 길게 눌러 복사해 주십시오.";
+  };
+}
+
+function submitScores(){
   if(!state.judge){ alert("먼저 심사위원을 선택해 주십시오."); window.scrollTo({top:0}); return; }
+  var code = buildCode();
   var missing = [];
   TALKS.forEach(function(tk){
     if(!(state.sc[tk.n+"-0"] && state.sc[tk.n+"-1"] && state.sc[tk.n+"-2"])) missing.push(tk.n);
   });
-  var wb = document.getElementById("warnbox");
-  wb.innerHTML = missing.length
-    ? "<div class='warnbox'>아직 채점이 끝나지 않은 연제: <b>" + missing.join(", ") +
-      "번</b><br>그대로 보내도 되지만, 해당 연제는 0점으로 집계됩니다.</div>"
-    : "";
-  var head = "[제41회 삼남비과포럼 채점] " + JUDGES[state.judge-1] +
-             " / 완료 " + doneCount() + "개 / 총 " + totalScore() + "점";
-  document.getElementById("code").value = head + "\n" + buildCode();
-  document.getElementById("copied").textContent = "";
-  document.getElementById("modal").className = "show";
-};
-document.getElementById("closeBtn").onclick = function(){
-  document.getElementById("modal").className = "";
-};
-document.getElementById("copyBtn").onclick = function(){
-  var ta = document.getElementById("code");
-  var ok = false;
-  try{
-    ta.removeAttribute("readonly");
-    ta.focus(); ta.select(); ta.setSelectionRange(0, 99999);
-    ok = document.execCommand("copy");
-    ta.setAttribute("readonly","readonly");
-  }catch(e){}
-  if(!ok && navigator.clipboard){
-    navigator.clipboard.writeText(ta.value).then(function(){
-      document.getElementById("copied").textContent = "복사되었습니다. 카톡방에 붙여넣어 주십시오.";
-    }).catch(function(){
-      document.getElementById("copied").textContent = "자동 복사 실패 — 위 글상자를 길게 눌러 전체 선택 후 복사해 주십시오.";
-    });
-    return;
+  var warn = missing.length
+    ? "<div class='warnbox'>아직 채점하지 않은 연제: <b>" + missing.join(", ") +
+      "번</b><br>지금 제출해도 되며, 나중에 채점 후 다시 제출하시면 갱신됩니다.</div>" : "";
+
+  openSheet("<div class='big'><div class='ico'>📡</div>" +
+            "<div class='t1'>전송 중…</div>" +
+            "<div class='t2'>" + esc(JUDGES[state.judge-1]) + " · 완료 " + doneCount() +
+            "개 · 총 " + totalScore() + "점</div></div>");
+
+  var payload = code + "\n#" + JUDGES[state.judge-1] + " done=" + doneCount() + " total=" + totalScore();
+  var done = false;
+  var timer = setTimeout(function(){ if(!done){ done = true; fail("시간 초과"); } }, 12000);
+
+  function ok(){
+    if(done) return; done = true; clearTimeout(timer);
+    state.sentCode = code; state.sentAt = Date.now(); save(); updateBar();
+    openSheet("<div class='big ok'><div class='ico'>✅</div>" +
+      "<div class='t1'>제출 완료</div>" +
+      "<div class='t2'>" + esc(JUDGES[state.judge-1]) + " · 완료 " + doneCount() +
+      "개 · 총 " + totalScore() + "점<br>집계 화면에 자동으로 반영되었습니다.</div></div>" +
+      warn +
+      "<div class='mrow'><button id='closeBtn'>확인</button></div>");
+    document.getElementById("closeBtn").onclick = closeSheet;
   }
-  document.getElementById("copied").textContent = ok
-    ? "복사되었습니다. 카톡방에 붙여넣어 주십시오."
-    : "자동 복사 실패 — 위 글상자를 길게 눌러 전체 선택 후 복사해 주십시오.";
-};
+  function fail(why){
+    if(done && why !== "시간 초과") return;
+    done = true; clearTimeout(timer);
+    openSheet("<div class='big fail'><div class='ico'>⚠️</div>" +
+      "<div class='t1'>전송 실패</div>" +
+      "<div class='t2'>" + esc(why) + " — 통신 상태를 확인하고 다시 시도해 주십시오.<br>" +
+      "입력한 점수는 그대로 저장되어 있습니다.</div></div>" +
+      "<div class='mrow'><button id='closeBtn'>닫기</button>" +
+      "<button id='retryBtn'>다시 시도</button></div>" +
+      backupBlock(code));
+    document.getElementById("closeBtn").onclick = closeSheet;
+    document.getElementById("retryBtn").onclick = submitScores;
+    wireBackup();
+  }
+
+  try{
+    fetch(ENDPOINT, {
+      method: "POST",
+      headers: {"Content-Type":"text/plain"},
+      body: payload,
+      cache: "no-store"
+    }).then(function(res){
+      if(res.ok) ok(); else fail("서버 응답 " + res.status);
+    }).catch(function(e){ fail("네트워크 오류"); });
+  }catch(e){ fail("전송 오류"); }
+}
+
+document.getElementById("doneBtn").onclick = submitScores;
 document.getElementById("resetBtn").onclick = function(){
-  if(confirm("입력한 점수를 모두 지웁니다. 계속할까요?")){
-    state.sc = {}; save();
+  if(confirm("이 휴대폰에 입력한 점수를 모두 지웁니다. 계속할까요?")){
+    state.sc = {}; state.sentCode = ""; state.sentAt = 0; save();
     TALKS.forEach(function(tk){ paintTalk(tk.n); });
     updateBar();
   }
 };
 document.getElementById("modal").onclick = function(e){
-  if(e.target.id === "modal"){ this.className = ""; }
+  if(e.target.id === "modal"){ closeSheet(); }
 };
 
 load(); renderJudges(); renderList(); updateBar();
